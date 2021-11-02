@@ -1,0 +1,5 @@
+const GOOGLE_MAP_API_KEY = {
+  API_KEY_MAP: 'AIzaSyCxS9XMkJGAdBTeTWD5N1K3gxv2x9OLhks'
+}
+
+export default GOOGLE_MAP_API_KEY
