@@ -22,8 +22,12 @@ const state = () => ({
   deletePost: {
     url: '/store-profile/post/delete',
     method: 'DELETE'
-  }
+  },
   //
+  updatePost: {
+    url: '/store-profile/post/update',
+    method: 'PUST'
+  }
 })
 
 const getters = {}
@@ -65,7 +69,19 @@ const actions = {
         Authorization: `Bearer ${Cookies.get('token')}`
       }
     })
-
+    return response
+  },
+  async updatePost(vueContext, payload) {
+    const response = await this.$axios({
+      url: `${vueContext.state.updatePost.url}/${payload.id}`,
+      method: vueContext.state.updatePost.method,
+      headers: {
+        Authorization: `Bearer ${Cookies.get('token')}`
+      },
+      data: {
+        ...payload
+      }
+    })
     return response
   }
 }

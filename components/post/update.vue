@@ -2,195 +2,203 @@
   <v-dialog
     :value="open"
     @keydown="$event.key === 'Escape' && toggle()"
-    max-width="900px"
+    max-width="70rem"
     scrollable
     persistent
   >
+    <!-- style="min-height: calc(100vh - 11rem); overflow-x: hidden" -->
     <v-card>
       <v-card-title class="border-title-dialog py-3"
-        >Cập nhật danh mục</v-card-title
+        >Cập nhật bài viết</v-card-title
       >
-      <v-card-text style="max-height: calc(100vh - 13rem); overflow-x: hidden">
-        <v-container class="pt-8 pb-5" fluid>
+      <v-card-text
+        class="pb-0"
+        style="max-height: calc(100vh - 13rem); overflow-x: hidden"
+      >
+        <v-container class="pt-8 pb-2" fluid>
           <v-row>
-            <v-col cols="4"></v-col>
-            <v-col
-              cols="4"
-              class="pt-0"
-              style="justify-content: center; display: flex;"
-            >
-              <div
-                v-if="$isNullOrEmpty(avatar)"
-                style="
+            <div class="ml-10 mt-2">
+              <v-row>
+                <v-col cols="10" class="py-0 pl-2 pr-2">
+                  <v-card
+                    outlined
+                    height="140"
+                    width="75rem"
+                    style="
+                    overflow-y: auto;
+                    background-color: #f5f7fe;
+                    border: none;
+                  "
+                    class="d-flex align-center"
+                  >
+                    <div
+                      v-if="images.length < maxrequied"
+                      class="d-flex justify-center"
+                    >
+                      <!-- <icon-select-file></icon-select-file> -->
+                      <div
+                        class="ml-4"
+                        style="
                           border: 2px dashed rgb(152, 157, 235);
                           border-radius: 10px;
-                          height:150px; width: 150px;
+                          cursor: pointer;
+                          height: 120px; width: 120px;
                         "
-                @click="selectFileOpen"
-              >
-                <v-row
-                  class="ma-0"
-                  justify="center"
-                  align="center"
-                  style="height:150px; width: 150px;"
-                >
-                  <v-col cols="12" class="d-flex justify-center">
-                    <div>
-                      <v-icon size="65" color="primary">
-                        mdi-cloud-upload
-                      </v-icon>
+                        @click="select_file"
+                      >
+                        <v-row
+                          class="ma-0"
+                          justify="center"
+                          align="center"
+                          style="height:120px; width: 120px;"
+                        >
+                          <v-col cols="12" class="d-flex justify-center">
+                            <div>
+                              <v-icon size="50" color="primary">
+                                mdi-cloud-upload
+                              </v-icon>
+                            </div>
+                          </v-col>
+                          <v-col cols="12" class="d-flex justify-center pt-0">
+                            <div class="primary--text text-none">
+                              Tải ảnh lên
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </div>
                     </div>
-                  </v-col>
-                  <v-col cols="12" class="d-flex justify-center pt-0">
-                    <div class="primary--text text-none">
-                      Tải ảnh lên
+
+                    <slot></slot>
+                    <draggable :list="slider_id" class="d-flex justify-center">
+                      <template v-for="(image, idx) in slider_id">
+                        <div :key="`${idx}+${image}`">
+                          <v-img
+                            :src="`${BASE.URL}${image.path}`"
+                            class="ml-2"
+                            height="120"
+                            width="120"
+                            style="border-radius: 10px;"
+                          >
+                          </v-img>
+                          <v-icon
+                            style="
+                            cursor: pointer;
+                            position: absolute;
+                            top: 10px;
+                            margin-left: 108px;
+                          "
+                            size="20"
+                            color="error"
+                            @click="delete_img_slider(idx)"
+                          >
+                            mdi-close-circle
+                          </v-icon>
+                        </div>
+                      </template>
+                    </draggable>
+                  </v-card>
+                  <div
+                    class="v-messages theme--light error--text mt-2 mb-5 ml-2"
+                    role="alert"
+                  >
+                    <div class="v-messages__wrapper">
+                      <div class="v-messages__message">
+                        {{ error_msg_slider }}
+                      </div>
                     </div>
-                  </v-col>
-                </v-row>
-              </div>
-              <div v-else>
-                <img
-                  v-viewer
-                  style=" height:auto; width: 150px;  object-fit: contain;"
-                  :src="`${BASE.URL}${avatar}`"
-                />
-
-                <v-btn
-                  class="text-none white--text"
-                  height="32"
-                  style="color: #286cae"
-                  v-if="!$isNullOrEmpty(avatar)"
-                  depressed
-                  block
-                  color="primary"
-                  @click="selectFileOpen"
-                >
-                  Chỉnh sửa
-                </v-btn>
-              </div>
-
-              <v-file-input
-                :value="file"
-                @change="inputFile($event)"
-                accept="image/png, image/jpeg, image/gif"
-                id="input_customer_information_file"
-                class="d-none"
-              ></v-file-input>
-            </v-col>
-            <v-col cols="4"></v-col>
-          </v-row>
-
-          <v-row>
-            <v-col cols="3"></v-col>
-            <v-col cols="6" class="pb-0">
-              <v-text-field
-                v-model="title"
-                :error-messages="titleErrors"
-                label="Tên danh mục *"
-                outlined
-                dense
-                light
-                clearable
-                @input="titleErrors = []"
-              />
-            </v-col>
-            <v-col cols="3"></v-col>
-          </v-row>
-
-          <v-row>
-            <v-col cols="12" class="mb-5 px-0">
-              <v-data-table
-                :headers="headers"
-                :items="items"
-                hide-default-footer
-                :loading="$wait.is('loadingUser')"
-                loading-text="Xin chờ..."
-                sort-by="stt"
-                :search="search"
-                no-results-text="Không có kết quả phù hợp"
-                no-data-text="Không có dữ liệu"
-                class="elevation-0 custom_header_table"
-                fixed-header
-                light
-              >
-                <template v-slot:top>
-                  <v-app-bar flat color="white">
-                    <v-toolbar-title>Món ăn</v-toolbar-title>
-                    <div class="flex-grow-1"></div>
-                    <v-text-field
-                      v-model="search"
-                      label="Tên món ăn"
-                      class="pr-2"
-                      style="max-width: 250px"
-                      dense
-                      outlined
-                      hide-details
-                      clearable
-                    />
-
-                    <v-btn
-                      v-if="role === 'ROLE_STORE'"
-                      depressed
-                      color="primary"
-                      class="text-none"
-                      @click="openAdd = true"
-                    >
-                      Thêm mới
-                    </v-btn>
-                  </v-app-bar>
-                </template>
-
-                <template v-slot:[`item.stt`]="{ item }">
-                  <div class="d-flex align-center justify-center">
-                    {{ getItemIndex(item) }}
                   </div>
+                  <v-file-input
+                    id="input_file"
+                    ref="input_file"
+                    :value="reset_file"
+                    multiple
+                    accept="image/png, image/jpeg, image/bmp"
+                    class="d-none"
+                    @change="inputFile"
+                  ></v-file-input>
+                </v-col>
+              </v-row>
+            </div>
+          </v-row>
+          <v-row>
+            <v-col cols="12" class="pt-0">
+              <v-autocomplete
+                light
+                deletable-chips
+                chips
+                label="Danh mục món ăn"
+                small-chips
+                no-data-text="Không có dữ liệu"
+                clearable
+                class="fs-14"
+                item-text="tagName"
+                item-value="id"
+                outlined
+                :menu-props="{ zIndex: '203' }"
+                multiple
+                hide-details
+                :items="listTag"
+                v-model="tag"
+              >
+                <!-- <template v-slot:selection="data">
+                  <v-chip
+                    v-bind="data.attrs"
+                    :input-value="data.selected"
+                    @click:close="remove(data.item)"
+                    close
+                    @click="data.select"
+                  >
+                    <v-avatar left>
+                      <v-img
+                        :src="`${BASE.URL}${data.item.image}`"
+                        width="40px"
+                        height="40px"
+                      ></v-img>
+                    </v-avatar>
+                    {{ data.item.tagName }}
+                  </v-chip>
                 </template>
-                <template v-slot:[`item.price`]="{ item }">
-                  <div>{{ $formatMoney({ amount: item.price }) }}</div>
-                </template>
-                <template v-slot:[`item.files`]="{ item }">
-                  <template v-for="i in item.files">
-                    <img
-                      class="mt-2"
-                      :key="i.id"
-                      width="160"
-                      height="80px"
-                      style="object-fit: contain;"
-                      v-viewer
-                      :src="`${BASE.URL}${i.path}`"
-                    />
+                <template v-slot:item="data">
+                  <template v-if="data.item !== 'object'">
+                    <v-list-item-avatar>
+                      <v-img
+                        :src="`${BASE.URL}${data.item.image}`"
+                        width="80px"
+                        height="80px"
+                      ></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        v-html="data.item.tagName"
+                      ></v-list-item-title>
+                    </v-list-item-content>
                   </template>
-                </template>
-                <template v-slot:[`item.action`]="{ item }">
-                  <v-tooltip v-if="role === 'ROLE_STORE'" bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon
-                        color="primary"
-                        class="mr-2"
-                        @click="OpenUpdate(item)"
-                        v-on="on"
-                      >
-                        mdi-pencil
-                      </v-icon>
-                    </template>
-                    <span>Cập nhật</span>
-                  </v-tooltip>
-                  <v-tooltip v-if="role === 'ROLE_STORE'" bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        color="primary"
-                        v-ripple
-                        icon
-                        small
-                        @click="OpenDeleteItem(item)"
-                      >
-                        <v-icon v-on="on">mdi-delete</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Xóa</span>
-                  </v-tooltip>
-                </template>
-              </v-data-table>
+                  <template v-else>
+                    <v-list-item-avatar>
+                      <v-img
+                        :src="`${BASE.URL}${data.item.image}`"
+                        width="80px"
+                        height="80px"
+                      ></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        v-html="data.item.tagName"
+                      ></v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                </template> -->
+              </v-autocomplete>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <vue-editor
+                v-model="content"
+                spellcheck="false"
+                placeholder="Nội dung"
+                id="vue-2-editor-fix-height-3"
+              ></vue-editor>
             </v-col>
           </v-row>
         </v-container>
@@ -206,165 +214,75 @@
           <div class="text-none">Đóng</div>
         </v-btn>
       </v-card-actions>
-      <yes-no-alert
-        :open="alertOpenDelete"
-        @toggle="alertOpenDelete = !alertOpenDelete"
-        :alertMsg="alertdelete"
-        @OK="confirmDelete"
-      />
     </v-card>
-    <add
-      :open="openAdd"
-      :data="data"
-      @toggle="openAdd = !openAdd"
-      @success="detail"
-    ></add>
-    <update
-      :open="openUpdated"
-      :data="dataDetail"
-      @toggle="openUpdated = !openUpdated"
-      @success="detail"
-    ></update>
   </v-dialog>
 </template>
 
 <script>
+import Vue from 'vue'
+import 'viewerjs/dist/viewer.css'
+import Viewer from 'v-viewer'
+
+Vue.use(Viewer)
 import BASE from '~/assets/configurations/BASE_URL'
-import add from '~/components/tag/updateTagSubTag/add.vue'
-import update from '~/components/tag/updateTagSubTag/update.vue'
-import Cookies from 'js-cookie'
+import IconSelectFile from '~/components/icon/SelectFile'
+import Draggable from 'vuedraggable'
 export default {
   components: {
-    add,
-    update
+    IconSelectFile,
+    Draggable
   },
   props: ['open', 'data'],
   data: () => ({
     BASE,
+    maxrequied: 6,
     title: null,
-    titleErrors: [],
-    items: [],
-    search: null,
-    name: null,
-    openAdd: false,
-    alertOpenDelete: false,
-    alertdelete: null,
-    openUpdated: false,
-    dataDetail: {},
     avatar: null,
+    content: null,
     img: null,
     file: null,
-    role: null
+    titleErrors: [],
+    hidden: false,
+    reset_file: null,
+    img: '',
+    error_msg_slider: '',
+    images: [],
+    limited_msg: '',
+    is_list_slider_id: [],
+    list_slider_id: [],
+    img_slider: [],
+    slider_id: [],
+    is_slider_id: [],
+
+    required_img: false,
+    tag: [],
+    listTag: []
   }),
   watch: {
-    open(value) {
-      if (value) {
-        this.role = Cookies.get('userGroup')
-        this.avatar = this.data.image
-        this.detail()
-      }
-    }
-  },
-  computed: {
-    headers() {
-      return [
-        { text: 'STT', sortable: false, value: 'stt', width: '5%' },
-        {
-          text: 'Hình ảnh',
-          sortable: false,
-          value: 'files',
-          width: 100,
-          align: 'center'
-        },
-        { text: 'Tên món ăn', sortable: false, value: 'name', width: 100 },
-        {
-          text: 'Giá tiền (VNĐ)',
-          sortable: false,
-          value: 'price',
-          width: 100,
-          align: 'center'
-        },
-        {
-          text: 'Chức năng',
-          value: 'action',
-          sortable: false,
-          align: 'center',
-          width: 80
-        }
-      ]
+    open() {
+      this.slider_id = this.data.files
+      this.content = this.data.content
+      this.tag = this.data.tags
+      console.log(this.data, '13123')
+      this.get_list()
     }
   },
   methods: {
-    getItemIndex(item) {
-      // return (this.page - 1) * this.itemsPerPage + this.items.indexOf(item) + 1
-      return this.items.indexOf(item) + 1
+    remove(item) {
+      const index = this.tag.indexOf(item.id)
+      if (index >= 0) this.tag.splice(index, 1)
     },
-    OpenDeleteItem(value) {
-      this.dataItem = value
-      this.alertOpenDelete = true
-      this.alertdelete = `Bạn có chắc chắn muốn xóa món " ${this.dataItem.name} " này không?`
-    },
-    OpenUpdate(value) {
-      this.dataDetail = value
-      this.openUpdated = true
-    },
-    confirmDelete() {
+    get_list() {
       this.$store
-        .dispatch('tag/deleteSubTag', { foodId: this.dataItem.id })
-        .then(response => {
-          if (response.response.status === 200) {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'success',
-              text: 'Xóa thành công'
-            })
-            this.detail()
-          } else {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'warning',
-              text: 'Hệ thống lỗi'
-            })
-          }
+        .dispatch('tag/getListTag', {
+          page: 0,
+          pageSize: 10000,
+          enable: false,
+          tagName: ''
         })
-    },
-    changePageSize(value) {
-      this.page = 1
-      this.itemsPerPage = value
-      this.$refs.paginationMA.reset()
-      this.detail()
-    },
-    changePage(value) {
-      this.page = value
-      this.detail()
-    },
-    detail() {
-      this.$store.dispatch('tag/detailTag', this.data.id).then(response => {
-        if (response.status === 200) {
-          this.title = response.data.tagName
-          this.items = response.data.foods
-        } else {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'warning',
-            text: 'Lỗi hệ thống'
-          })
-        }
-      })
-    },
-
-    file_selected(file) {
-      this.file_img = file.name
-      this.required_img = false
-      const formData = new FormData()
-      formData.append('file', file)
-      const data = { formData }
-      this.$store
-        .dispatch('app/filesUpload', data)
         .then(response => {
-          console.log(response.response.status)
-          if (response.response.status === 200) {
-            this.avatar = response.response.data.data.path
+          if (response.status === 200) {
+            this.listTag = response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
@@ -373,67 +291,85 @@ export default {
             })
           }
         })
-        .catch(e => {
-          this.$log.debug(e)
-        })
     },
-    selectFileOpen() {
-      return window.document
-        .getElementById('input_customer_information_file')
-        .click()
+
+    delete_img_slider(index) {
+      this.slider_id.splice(index, 1)
+      this.reset_file = []
     },
-    inputFile(file) {
-      if (!this.$isNullOrEmpty(file)) {
-        this.hidden = false
-        let hasErrors = false
+    select_file() {
+      return window.document.getElementById('input_file').click()
+    },
 
-        if ((file.size || 0) > 3145728) {
-          hasErrors = true
-          this.limited_msg = 'File được chọn không được vượt quá 3MB'
-        }
-
-        if (!hasErrors) {
-          this.limited_msg = ''
-          this.reset_file = file
-
-          if (this.$isNullOrEmpty(file)) {
-            this.img = URL.createObjectURL(file)
+    inputFile(files) {
+      let hasErrors = false
+      if ((files || []).length === 0) {
+        hasErrors = true
+        this.error_msg_slider = 'Không được để trống'
+      }
+      if ((files || []).length !== 0) {
+        for (let i = 0; i < files.length; i++) {
+          if (files[i].size > 3145728) {
+            hasErrors = true
+            this.error_msg_slider = 'File được chọn không được vượt quá 3MB'
           }
-          this.file_selected(file)
         }
       }
+      if (!hasErrors) {
+        this.error_msg_slider = ''
+        const formData = new FormData()
+        for (let i = 0; i < files.length; i++) {
+          formData.append('file', files[i])
+        }
+        const data = { formData }
+        this.$store
+          .dispatch('app/filesUpload', data)
+          .then(response => {
+            if (response.response.status === 200) {
+              this.slider_id.unshift(response.response.data.data)
+            }
+          })
+          .catch(e => {
+            this.$log.debug(e)
+          })
+        this.reset_file = []
+      }
     },
-
     toggle() {
       this.$emit('toggle')
       this.reset()
     },
+
     reset() {
-      this.title = null
-      this.titleErrors = []
-      this.avatar = null
+      this.content = null
+
+      this.slider_id = []
+      this.tag = null
     },
 
     checkValidate() {
       let hasErrors = false
-
-      if (this.$isNullOrEmpty(this.title)) {
-        hasErrors = true
-        this.titleErrors = ['Vui lòng nhập nội dung']
-      }
-
       if (!hasErrors) {
         this.add()
       }
     },
     add() {
-      let data = {
-        tagName: this.title,
-        id: this.data.id,
-        image: this.avatar
+      let files = []
+
+      for (let i = 0; i < this.slider_id.length; i++) {
+        files.push({
+          path: this.slider_id[i].path,
+          type: 'file'
+        })
       }
-      this.$store.dispatch('tag/updateTag', data).then(response => {
-        if (response.status === 200) {
+      let data = {
+        content: this.content,
+        files,
+        id: this.data.id,
+        tagIds: this.tag
+      }
+      this.$store.dispatch('post/updatePost', data).then(response => {
+        if (response.response.status === 200) {
           this.$router.app.$notify({
             group: 'main',
             type: 'success',
@@ -453,3 +389,22 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4 !important;
+  border-radius: 10px !important;
+}
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: 0.5;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+</style>

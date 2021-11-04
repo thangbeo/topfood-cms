@@ -101,7 +101,7 @@
           </template>
         </template>
         <template v-slot:[`item.action`]="{ item }">
-          <!-- <v-tooltip bottom>
+          <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-icon
                 color="primary"
@@ -113,7 +113,7 @@
               </v-icon>
             </template>
             <span>Cập nhật</span>
-          </v-tooltip> -->
+          </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -147,12 +147,12 @@
     <add @success="get_list" :open="openAdd" @toggle="openAdd = !openAdd"></add>
 
     <!-- cập nhật -->
-    <!-- <update
+    <update
       :open="openUpdated"
       :data="dataDetail"
       @toggle="openUpdated = !openUpdated"
       @success="get_list"
-    ></update> -->
+    ></update>
     <!-- Thay đổi trạng thái -->
     <!-- <yes-no-alert
       :open="open_change"
@@ -302,10 +302,10 @@ export default {
       this.page = 0
       this.get_list()
     },
-    // OpenUpdate(value) {
-    //   this.dataDetail = value
-    //   this.openUpdated = true
-    // },
+    OpenUpdate(value) {
+      this.dataDetail = value
+      this.openUpdated = true
+    },
     getItemIndex(item) {
       return this.page * this.pageSize + this.items.indexOf(item) + 1
       // return this.items.indexOf(item) + 1
