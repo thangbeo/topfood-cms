@@ -70,17 +70,17 @@
 
         <template v-slot:[`item.files`]="{ item }">
           <div class="my-2">
-            <template v-if="(item.files || []).length !== 0">
-              <template v-for="i in item.files">
+            <div v-viewer v-if="(item.files || []).length !== 0">
+              <template v-for="(i, idx) in item.files">
                 <img
-                  :key="i.id"
+                  :key="i + idx"
                   width="160"
                   height="80px"
                   style="object-fit: contain;"
-                  v-viewer
-                  :src="`${BASE.URL}${i.path}`"
-              /></template>
-            </template>
+                  :src="`${BASE.URL}${i}`"
+                />
+              </template>
+            </div>
             <img
               v-else
               width="160"
