@@ -96,17 +96,17 @@ html {
 }
 
 .custom_header_table
-table
-.v-data-table__progress
-th
-.v-progress-linear__background {
+  table
+  .v-data-table__progress
+  th
+  .v-progress-linear__background {
   background-color: white !important;
 }
 
 .custom_header_table
-table
-.v-data-table__progress
-.v-progress-linear__indeterminate {
+  table
+  .v-data-table__progress
+  .v-progress-linear__indeterminate {
   background-color: #ff9800 !important;
   border-color: #ff9800 !important;
 }
@@ -150,10 +150,10 @@ table
 
 .denser-nav {
   .v-application--is-ltr
-  .v-list--dense.v-list--nav
-  .v-list-group--no-action
-  > .v-list-group__items
-  > .v-list-item {
+    .v-list--dense.v-list--nav
+    .v-list-group--no-action
+    > .v-list-group__items
+    > .v-list-item {
     padding-left: 2px !important;
   }
 
@@ -269,4 +269,21 @@ table
 .total-text-color {
   color: #ff5252;
   padding-left: 4px;
+}
+
+.ql-snow {
+  .ql-picker {
+    &.ql-size {
+      .ql-picker-label,
+      .ql-picker-item {
+        &::before {
+          content: attr(data-value) !important;
+        }
+      }
+    }
+  }
+}
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  max-height: 200px;
+  overflow-x: auto;
 }

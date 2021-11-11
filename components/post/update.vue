@@ -68,34 +68,32 @@
                       </div>
                     </div>
 
-                    <slot></slot>
-                    <draggable :list="slider_id" class="d-flex justify-center">
-                      <template v-for="(image, idx) in slider_id">
-                        <div :key="`${idx}+${image}`">
-                          <v-img
-                            :src="`${BASE.URL}${image.path}`"
-                            class="ml-2"
-                            height="120"
-                            width="120"
-                            style="border-radius: 10px;"
-                          >
-                          </v-img>
-                          <v-icon
-                            style="
+                    <div
+                      v-for="(image, idx) in slider_id"
+                      :key="`${idx}+${image}`"
+                    >
+                      <v-img
+                        :src="`${BASE.URL}${image.path}`"
+                        class="ml-2"
+                        height="120"
+                        width="120"
+                        style="border-radius: 10px;"
+                      >
+                      </v-img>
+                      <v-icon
+                        style="
                             cursor: pointer;
                             position: absolute;
                             top: 10px;
                             margin-left: 108px;
                           "
-                            size="20"
-                            color="error"
-                            @click="delete_img_slider(idx)"
-                          >
-                            mdi-close-circle
-                          </v-icon>
-                        </div>
-                      </template>
-                    </draggable>
+                        size="20"
+                        color="error"
+                        @click="delete_img_slider(idx)"
+                      >
+                        mdi-close-circle
+                      </v-icon>
+                    </div>
                   </v-card>
                   <div
                     class="v-messages theme--light error--text mt-2 mb-5 ml-2"
@@ -134,66 +132,18 @@
                 item-text="tagName"
                 item-value="id"
                 outlined
-                :menu-props="{ zIndex: '203' }"
                 multiple
                 hide-details
                 :items="listTag"
                 v-model="tag"
               >
-                <!-- <template v-slot:selection="data">
-                  <v-chip
-                    v-bind="data.attrs"
-                    :input-value="data.selected"
-                    @click:close="remove(data.item)"
-                    close
-                    @click="data.select"
-                  >
-                    <v-avatar left>
-                      <v-img
-                        :src="`${BASE.URL}${data.item.image}`"
-                        width="40px"
-                        height="40px"
-                      ></v-img>
-                    </v-avatar>
-                    {{ data.item.tagName }}
-                  </v-chip>
-                </template>
-                <template v-slot:item="data">
-                  <template v-if="data.item !== 'object'">
-                    <v-list-item-avatar>
-                      <v-img
-                        :src="`${BASE.URL}${data.item.image}`"
-                        width="80px"
-                        height="80px"
-                      ></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        v-html="data.item.tagName"
-                      ></v-list-item-title>
-                    </v-list-item-content>
-                  </template>
-                  <template v-else>
-                    <v-list-item-avatar>
-                      <v-img
-                        :src="`${BASE.URL}${data.item.image}`"
-                        width="80px"
-                        height="80px"
-                      ></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        v-html="data.item.tagName"
-                      ></v-list-item-title>
-                    </v-list-item-content>
-                  </template>
-                </template> -->
               </v-autocomplete>
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
               <vue-editor
+                :editor-toolbar="customToolbar"
                 v-model="content"
                 spellcheck="false"
                 placeholder="Nội dung"
@@ -206,7 +156,6 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-
         <v-btn text height="30px" class="primary" @click="checkValidate">
           <div class="text-none">Lưu</div>
         </v-btn>
@@ -234,6 +183,58 @@ export default {
   },
   props: ['open', 'data'],
   data: () => ({
+    customToolbar: [
+      // font size
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      // text direction
+      [
+        {
+          size: [
+            '6px',
+            '8px',
+            '10px',
+            '12px',
+            '14px',
+            '16px',
+            '18px',
+            '20px',
+            '24px',
+            '30px',
+            '32px',
+            '36px'
+          ]
+        }
+      ],
+      ['bold', 'italic', 'underline', 'strike'],
+      // Bold, italic, underline, strikethrough
+      ['blockquote', 'code-block'],
+      // Reference, code block
+      [{ header: 1 }, { header: 2 }],
+      // Title, the form of key-value pairs; 1, 2 represents the font size
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      // list
+      [{ script: 'sub' }, { script: 'super' }],
+      // superscript and subscript
+      [{ indent: '-1' }, { indent: '+1' }],
+      // indent
+      [{ direction: 'rtl' }],
+      // Several levels of title
+      [{ color: [] }, { background: [] }],
+      // font color, font background color
+      [{ font: [] }],
+      // font
+      [{ align: [] }],
+      // alignment
+      ['clean']
+      // Clear font style
+      // ['image', 'video']
+      // Upload pictures, upload videos
+    ],
+    editorSettings: {
+      modules: {
+        Size: true
+      }
+    },
     BASE,
     maxrequied: 6,
     title: null,
@@ -260,10 +261,19 @@ export default {
   }),
   watch: {
     open() {
-      this.slider_id = this.data.files
+      this.slider_id = []
+      for (let i = 0; i < this.data.files.length; i++) {
+        this.slider_id.push({
+          path: this.data.files[i]
+        })
+      }
+
       this.content = this.data.content
-      this.tag = this.data.tags
-      console.log(this.data, '13123')
+      this.tag = []
+      for (let i = 0; i < this.data.tags.length; i++) {
+        this.tag.push(this.data.tags[i].id)
+      }
+
       this.get_list()
     }
   },
@@ -357,10 +367,7 @@ export default {
       let files = []
 
       for (let i = 0; i < this.slider_id.length; i++) {
-        files.push({
-          path: this.slider_id[i].path,
-          type: 'file'
-        })
+        files.push(this.slider_id[i].path)
       }
       let data = {
         content: this.content,

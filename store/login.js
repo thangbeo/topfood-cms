@@ -196,18 +196,25 @@ export const actions = {
           'Tài khoản người dùng hoặc mật khẩu không hợp lệ'
         )
       } else {
-        // Succeed
-
-        this.$router.app.$notify({
-          group: 'login',
-          type: 'success',
-          text: 'Đăng nhập thành công'
-        })
-        Cookies.set('token', response.response.data.data.token)
-        Cookies.set('username', response.response.data.data.account.username)
-        Cookies.set('userId', response.response.data.data.account.id)
-        Cookies.set('userGroup', response.response.data.data.account.role)
-        this.$router.push('/')
+        if (response.response.data.data.account.role !== 'ROLE_USER') {
+          // Succeed
+          this.$router.app.$notify({
+            group: 'login',
+            type: 'success',
+            text: 'Đăng nhập thành công'
+          })
+          Cookies.set('token', response.response.data.data.token)
+          Cookies.set('username', response.response.data.data.account.username)
+          Cookies.set('userId', response.response.data.data.account.id)
+          Cookies.set('userGroup', response.response.data.data.account.role)
+          this.$router.push('/')
+        } else {
+          this.$router.app.$notify({
+            group: 'login',
+            type: 'warn',
+            text: 'Tài khoản không hợp lệ'
+          })
+        }
       }
 
       // this.app.wait.end('logging')

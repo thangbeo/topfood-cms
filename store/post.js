@@ -11,14 +11,6 @@ const state = () => ({
     url: '/store-profile/post/create',
     method: 'POST'
   },
-  updateTag: {
-    url: '/api/tag',
-    method: 'PUT'
-  },
-  detailTag: {
-    url: '/api/tag',
-    method: 'GET'
-  },
   deletePost: {
     url: '/store-profile/post/delete',
     method: 'DELETE'
@@ -26,7 +18,7 @@ const state = () => ({
   //
   updatePost: {
     url: '/store-profile/post/update',
-    method: 'PUST'
+    method: 'PUT'
   }
 })
 
@@ -73,7 +65,7 @@ const actions = {
   },
   async updatePost(vueContext, payload) {
     const response = await this.$axios({
-      url: `${vueContext.state.updatePost.url}/${payload.id}`,
+      url: `${vueContext.state.updatePost.url}`,
       method: vueContext.state.updatePost.method,
       headers: {
         Authorization: `Bearer ${Cookies.get('token')}`
