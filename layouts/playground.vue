@@ -9,9 +9,7 @@
     ></the-side-menu>
     <the-app-bar :clipped-left="false" fixed app elevation="2">
       <v-app-bar-nav-icon @click.stop="sideMenu = !sideMenu" />
-      <v-toolbar-title class="align-center d-flex">
-        <img src="/logo/logo.png" width="180" />
-      </v-toolbar-title>
+      <v-toolbar-title class="align-center d-flex"> </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon color="primary" size="40">mdi-account-circle</v-icon>

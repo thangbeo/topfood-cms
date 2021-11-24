@@ -141,22 +141,40 @@
             </template>
             <span>Reset mật khẩu</span>
           </v-tooltip>
-          <v-tooltip
-            bottom
-            v-if="item.status !== 'DISABLE' && item.status !== 'ACTIVE'"
-          >
-            <template v-slot:activator="{ on }">
-              <v-icon
-                color="primary"
-                class="mr-2"
-                @click="SetAcitveUser(item)"
-                v-on="on"
-              >
-                mdi-account-check
-              </v-icon>
-            </template>
-            <span>Kích hoạt tài khoản</span>
-          </v-tooltip>
+          <template v-if="item.role === 'ROLE_STORE'">
+            <v-tooltip bottom v-if="item.status !== 'ACTIVE'">
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  color="primary"
+                  class="mr-2"
+                  @click="SetAcitveUser(item)"
+                  v-on="on"
+                >
+                  mdi-account-check
+                </v-icon>
+              </template>
+              <span>Kích hoạt lại tài khoản</span>
+            </v-tooltip>
+          </template>
+
+          <template v-else>
+            <v-tooltip
+              bottom
+              v-if="item.status !== 'DISABLE' && item.status !== 'ACTIVE'"
+            >
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  color="primary"
+                  class="mr-2"
+                  @click="SetAcitveUser(item)"
+                  v-on="on"
+                >
+                  mdi-account-check
+                </v-icon>
+              </template>
+              <span>Kích hoạt tài khoản</span>
+            </v-tooltip>
+          </template>
           <v-tooltip bottom v-if="item.status !== 'DISABLE'">
             <template v-slot:activator="{ on }">
               <v-icon
@@ -355,9 +373,9 @@ export default {
         phoneNumber: (this.phone || '').trim().length !== 0 ? this.phone : ''
       }
       this.$store.dispatch('users/get_list', DATA).then(response => {
-        if (response.status === 200) {
-          this.items = response.data.data
-          this.pageCount = response.data.data.pageTotal
+        if (response.response.status === 200) {
+          this.items = response.response.data.data
+          this.pageCount = response.response.data.data.pageTotal
         } else {
           this.$router.app.$notify({
             group: 'main',

@@ -2,9 +2,9 @@
   <v-row align="center" justify="center">
     <v-col cols="12" sm="8" md="4">
       <v-card class="elevation-12">
-        <v-card-text class="pt-0">
-          <v-row class="mt-0" justify="center">
-            <!-- <v-img :src="logo" contain max-width="250" max-height="250"/> -->
+        <v-card-text>
+          <v-row class="mt-1" justify="center">
+            <h2 class="black--text">QUÊN MẬT KHẨU</h2>
           </v-row>
           <v-divider class=" my-6" />
 
@@ -39,6 +39,7 @@
                 @click="takeOtp"
                 class="text-none"
                 height="40"
+                :loading="$wait.is('logging')"
                 >Lấy OTP</v-btn
               >
             </v-col>
@@ -71,7 +72,13 @@
           </v-row>
 
           <div class="pt-4">
-            <v-btn color="primary" @click="logup" class="text-none" block>
+            <v-btn
+              color="primary"
+              :loading="$wait.is('loggingConfirm')"
+              @click="logup"
+              class="text-none"
+              block
+            >
               Xác nhận
             </v-btn>
           </div>
@@ -110,6 +117,7 @@ export default {
   data: () => ({
     // logo,
     logging: false,
+    loggingConfirm: false,
     showPass: false,
     emailErrors: [],
     password: null,
@@ -157,31 +165,40 @@ export default {
       }
 
       if (!hasErrors) {
+        this.$wait.start('loggingConfirm')
         let data = {
           email: this.email,
           newPassword: this.newPassword,
           otp: this.importOpt
         }
 
-        this.$store.dispatch('login/forgotPassword', data).then(response => {
-          if (response.response.status !== 200) {
-            this.$router.app.$notify({
-              group: 'login',
-              type: 'warn',
-              text: response.response.data.message
-            })
-          } else {
-            this.$router.app.$notify({
-              group: 'login',
-              type: 'success',
-              text: response.response.data.message
-            })
-            setTimeout(() => {
-              this.$router.push('/login')
-              this.reset()
-            }, 1000)
-          }
-        })
+        this.$store
+          .dispatch('login/forgotPassword', data)
+          .then(response => {
+            if (response.response.status !== 200) {
+              this.$router.app.$notify({
+                group: 'login',
+                type: 'warn',
+                text: response.response.data.message
+              })
+            } else {
+              this.$router.app.$notify({
+                group: 'login',
+                type: 'success',
+                text: response.response.data.message
+              })
+              setTimeout(() => {
+                this.$router.push('/login')
+                this.reset()
+              }, 1000)
+            }
+          })
+          .catch(e => {
+            this.$log.debug(e)
+          })
+          .finally(() => {
+            this.$wait.end('loggingConfirm')
+          })
       }
     },
     reset() {
@@ -235,6 +252,7 @@ export default {
         this.emailErrors = ['Email không hợp lệ']
       }
       if (!hasErrors) {
+        this.$wait.start('logging')
         this.$store
           .dispatch('login/getOpt', {
             email: this.email
@@ -256,6 +274,12 @@ export default {
                 text: response.response.data.message
               })
             }
+          })
+          .catch(e => {
+            this.$log.debug(e)
+          })
+          .finally(() => {
+            this.$wait.end('logging')
           })
       }
     }

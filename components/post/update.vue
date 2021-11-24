@@ -73,7 +73,7 @@
                       :key="`${idx}+${image}`"
                     >
                       <v-img
-                        :src="`${BASE.URL}${image.path}`"
+                        :src="`${image.path}`"
                         class="ml-2"
                         height="120"
                         width="120"
@@ -156,7 +156,13 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn text height="30px" class="primary" @click="checkValidate">
+        <v-btn
+          text
+          height="30px"
+          class="primary"
+          :loading="$wait.is('logging')"
+          @click="checkValidate"
+        >
           <div class="text-none">Lưu</div>
         </v-btn>
         <v-btn text height="30px" class="secondary" @click="toggle">
@@ -235,6 +241,7 @@ export default {
         Size: true
       }
     },
+    logging: false,
     BASE,
     maxrequied: 6,
     title: null,
@@ -254,7 +261,7 @@ export default {
     img_slider: [],
     slider_id: [],
     is_slider_id: [],
-
+    path: null,
     required_img: false,
     tag: [],
     listTag: []
@@ -262,6 +269,7 @@ export default {
   watch: {
     open() {
       this.slider_id = []
+
       for (let i = 0; i < this.data.files.length; i++) {
         this.slider_id.push({
           path: this.data.files[i]
@@ -291,8 +299,8 @@ export default {
           tagName: ''
         })
         .then(response => {
-          if (response.status === 200) {
-            this.listTag = response.data.data
+          if (response.response.status === 200) {
+            this.listTag = response.response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
@@ -336,7 +344,8 @@ export default {
           .dispatch('app/filesUpload', data)
           .then(response => {
             if (response.response.status === 200) {
-              this.slider_id.unshift(response.response.data.data)
+              this.path = response.response.data.data.path
+              this.slider_id.unshift({ path: `${BASE.URL}${this.path}` })
             }
           })
           .catch(e => {
@@ -364,6 +373,7 @@ export default {
       }
     },
     add() {
+      this.$wait.start('logging')
       let files = []
 
       for (let i = 0; i < this.slider_id.length; i++) {
@@ -375,23 +385,31 @@ export default {
         id: this.data.id,
         tagIds: this.tag
       }
-      this.$store.dispatch('post/updatePost', data).then(response => {
-        if (response.response.status === 200) {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'success',
-            text: 'Cập nhật thành công'
-          })
-          this.$emit('success')
-          this.toggle()
-        } else {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'warning',
-            text: 'Lỗi hệ thống'
-          })
-        }
-      })
+      this.$store
+        .dispatch('post/updatePost', data)
+        .then(response => {
+          if (response.response.status === 200) {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'success',
+              text: 'Cập nhật thành công'
+            })
+            this.$emit('success')
+            this.toggle()
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống'
+            })
+          }
+        })
+        .catch(e => {
+          this.$log.debug(e)
+        })
+        .finally(() => {
+          this.$wait.end('logging')
+        })
     }
   }
 }

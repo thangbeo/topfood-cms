@@ -257,7 +257,6 @@ export default {
         })
         .then(response => {
           if (response.response.status === 200) {
-            console.log(response.response.data.data.data)
             this.items = response.response.data.data.data
             this.pageCount = response.response.data.data.pageTotal
           } else {

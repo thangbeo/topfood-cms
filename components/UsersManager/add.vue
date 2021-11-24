@@ -99,7 +99,7 @@
             />
           </v-col>
 
-          <v-col cols="12" sm="6" md="6" class="pt-0">
+          <v-col cols="12" sm="6" md="6" class="py-0">
             <v-text-field
               v-model="email"
               :error-messages="emailErrors"
@@ -130,7 +130,13 @@
       <v-card-actions>
         <v-spacer />
 
-        <v-btn text height="30px" class="primary" @click="checkValidate">
+        <v-btn
+          text
+          height="30px"
+          class="primary"
+          :loading="$wait.is('logging')"
+          @click="checkValidate"
+        >
           <div class="text-none">Thêm</div>
         </v-btn>
         <v-btn text height="30px" class="secondary" @click="toggle">
@@ -147,6 +153,7 @@ import moment from 'moment'
 export default {
   props: ['open'],
   data: () => ({
+    logging: false,
     menu: false,
     menu_date: moment().format('YYYY-MM-DD'),
     showPassword: false,
@@ -188,7 +195,6 @@ export default {
   watch: {
     open(value) {
       if (value) {
-        this.get_list()
       } else {
         this.reset()
       }
@@ -196,25 +202,25 @@ export default {
   },
   methods: {
     // danh sách quyền
-    get_list() {
-      this.$store
-        .dispatch('rule/getListRule', {
-          pageSize: 10000000,
-          page: 0,
-          title: ''
-        })
-        .then(response => {
-          if (response.status === 200) {
-            this.listGroupUsers = response.data.data
-          } else {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'warning',
-              text: 'Lỗi hệ thống'
-            })
-          }
-        })
-    },
+    // get_list() {
+    //   this.$store
+    //     .dispatch('rule/getListRule', {
+    //       pageSize: 10000000,
+    //       page: 0,
+    //       title: ''
+    //     })
+    //     .then(response => {
+    //       if (response.status === 200) {
+    //         this.listGroupUsers = response.data.data
+    //       } else {
+    //         this.$router.app.$notify({
+    //           group: 'main',
+    //           type: 'warning',
+    //           text: 'Lỗi hệ thống'
+    //         })
+    //       }
+    //     })
+    // },
     allowedDates(value) {
       const today = moment(new Date()).format('YYYY-MM-DD')
 
@@ -362,6 +368,7 @@ export default {
       }
     },
     add() {
+      this.$wait.start('logging')
       let data = {
         username: this.user_name.trim(),
         phoneNumber: this.phone.trim(),
@@ -395,7 +402,9 @@ export default {
         .catch(e => {
           this.$log.debug(e)
         })
-        .finally(() => {})
+        .finally(() => {
+          this.$wait.end('logging')
+        })
     }
   }
 }

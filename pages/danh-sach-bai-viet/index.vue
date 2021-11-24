@@ -1,5 +1,5 @@
 <template>
-  <div v-if="role !== 'ROLE_USER'">
+  <div v-if="role === 'ROLE_STORE'">
     <client-only>
       <v-data-table
         :headers="headers"
@@ -77,7 +77,7 @@
                   width="160"
                   height="80px"
                   style="object-fit: contain;"
-                  :src="`${BASE.URL}${i}`"
+                  :src="`${i}`"
                 />
               </template>
             </div>
@@ -327,7 +327,8 @@ export default {
       this.$store
         .dispatch('post/getList', {
           page: this.page,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          accountId: Cookies.get('userId')
         })
         .then(response => {
           if (response.response.status === 200) {

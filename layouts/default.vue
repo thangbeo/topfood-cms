@@ -20,51 +20,102 @@
         style="padding-bottom: 54px"
         class="denser-nav"
       >
-        <v-list nav dense expand class="disabled-active">
-          <template v-for="(item, index) in topmenu">
-            <v-list-group
-              v-if="(item.child || []).length !== 0"
-              :key="index"
-              no-action
-            >
-              <template v-slot:activator>
-                <template>
+        <template>
+          <v-list nav dense expand class="disabled-active">
+            <template v-if="role === 'ROLE_ADMIN'">
+              <template v-for="(item, index) in topmenuAdmin">
+                <v-list-group
+                  v-if="(item.child || []).length !== 0"
+                  :key="index"
+                  no-action
+                >
+                  <template v-slot:activator>
+                    <template>
+                      <v-list-item-icon>
+                        <v-icon v-text="item.page_icon" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>{{
+                          item.page_name
+                        }}</v-list-item-title>
+                      </v-list-item-content>
+                    </template>
+                  </template>
+
+                  <v-list-item
+                    v-for="i in item.child"
+                    :to="i.page_url"
+                    :key="i.id"
+                    router
+                  >
+                    <v-list-item-icon>
+                      <v-icon v-text="i.page_icon" />
+                    </v-list-item-icon>
+                    <v-list-item-title class="pt-1" v-text="i.page_name" />
+                  </v-list-item>
+                </v-list-group>
+                <v-list-item
+                  v-else
+                  :key="index"
+                  :to="item.page_url"
+                  router
+                  active-class="primary--text"
+                >
                   <v-list-item-icon>
                     <v-icon v-text="item.page_icon" />
                   </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.page_name }}</v-list-item-title>
-                  </v-list-item-content>
-                </template>
+                  <v-list-item-title v-text="item.page_name" />
+                </v-list-item>
               </template>
+            </template>
+            <template v-if="role === 'ROLE_STORE'">
+              <template v-for="(item, index) in topmenuStore">
+                <v-list-group
+                  v-if="(item.child || []).length !== 0"
+                  :key="index"
+                  no-action
+                >
+                  <template v-slot:activator>
+                    <template>
+                      <v-list-item-icon>
+                        <v-icon v-text="item.page_icon" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>{{
+                          item.page_name
+                        }}</v-list-item-title>
+                      </v-list-item-content>
+                    </template>
+                  </template>
 
-              <v-list-item
-                v-for="i in item.child"
-                :to="i.page_url"
-                :key="i.id"
-                router
-              >
-                <v-list-item-icon>
-                  <v-icon v-text="i.page_icon" />
-                </v-list-item-icon>
-                <v-list-item-title class="pt-1" v-text="i.page_name" />
-              </v-list-item>
-            </v-list-group>
-            <v-list-item
-              v-else
-              :key="index"
-              :to="item.page_url"
-              router
-              active-class="primary--text"
-            >
-              <v-list-item-icon>
-                <v-icon v-text="item.page_icon" />
-              </v-list-item-icon>
-              <v-list-item-title v-text="item.page_name" />
-            </v-list-item>
-          </template>
-        </v-list>
-
+                  <v-list-item
+                    v-for="i in item.child"
+                    :to="i.page_url"
+                    :key="i.id"
+                    router
+                  >
+                    <v-list-item-icon>
+                      <v-icon v-text="i.page_icon" />
+                    </v-list-item-icon>
+                    <v-list-item-title class="pt-1" v-text="i.page_name" />
+                  </v-list-item>
+                </v-list-group>
+                <v-list-item
+                  v-else
+                  :key="index"
+                  :to="item.page_url"
+                  router
+                  active-class="primary--text"
+                >
+                  <v-list-item-icon>
+                    <v-icon v-text="item.page_icon" />
+                  </v-list-item-icon>
+                  <v-list-item-title v-text="item.page_name" />
+                </v-list-item>
+              </template>
+            </template>
+          </v-list>
+        </template>
         <div
           style="background-color: #f5f5f5; position: fixed; bottom: 0; margin-left: auto; margin-right: auto;"
           class="w-100"
@@ -248,7 +299,7 @@ export default {
       // watermark,
 
       accountMenuItems: [],
-      topmenu: [
+      topmenuAdmin: [
         {
           page_name: 'Trang chủ',
           page_url: '/',
@@ -268,6 +319,38 @@ export default {
               page_name: 'Danh sách luật TopFood'
             }
           ]
+        },
+        {
+          page_name: 'Món ăn',
+          child: [
+            {
+              page_url: 'danh-muc-mon-an',
+              page_icon: '',
+              page_name: 'Quản lý danh mục món ăn '
+            }
+          ]
+        }
+        // {
+        //   page_name: 'Bài viết',
+        //   child: [
+        //     // {
+        //     //   page_url: '',
+        //     //   page_icon: '',
+        //     //   page_name: 'Quản lý danh mục bài viết'
+        //     // },
+        //     {
+        //       page_url: 'danh-sach-bai-viet',
+        //       page_icon: '',
+        //       page_name: 'Danh sách bài viết'
+        //     }
+        //   ]
+        // }
+      ],
+      topmenuStore: [
+        {
+          page_name: 'Trang chủ',
+          page_url: '/',
+          child: []
         },
         {
           page_name: 'Món ăn',

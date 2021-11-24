@@ -155,7 +155,13 @@
       <v-card-actions>
         <v-spacer />
 
-        <v-btn text height="30px" class="primary" @click="checkValidate">
+        <v-btn
+          text
+          height="30px"
+          class="primary"
+          :loading="$wait.is('logging')"
+          @click="checkValidate"
+        >
           <div class="text-none">Thêm</div>
         </v-btn>
         <v-btn text height="30px" class="secondary" @click="toggle">
@@ -235,6 +241,7 @@ export default {
       }
     },
     BASE,
+    logging: false,
     maxrequied: 6,
     title: null,
     avatar: null,
@@ -277,8 +284,8 @@ export default {
           tagName: ''
         })
         .then(response => {
-          if (response.status === 200) {
-            this.listTag = response.data.data
+          if (response.response.status === 200) {
+            this.listTag = response.response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
@@ -343,6 +350,7 @@ export default {
       }
     },
     add() {
+      this.$wait.start('logging')
       let files = []
 
       for (let i = 0; i < this.slider_id.length; i++) {
@@ -354,23 +362,31 @@ export default {
         id: null,
         tagIds: this.tag
       }
-      this.$store.dispatch('post/addPost', data).then(response => {
-        if (response.response.status === 200) {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'success',
-            text: 'Thêm thành công'
-          })
-          this.$emit('success')
-          this.toggle()
-        } else {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'warning',
-            text: 'Lỗi hệ thống'
-          })
-        }
-      })
+      this.$store
+        .dispatch('post/addPost', data)
+        .then(response => {
+          if (response.response.status === 200) {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'success',
+              text: 'Thêm thành công'
+            })
+            this.$emit('success')
+            this.toggle()
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống'
+            })
+          }
+        })
+        .catch(e => {
+          this.$log.debug(e)
+        })
+        .finally(() => {
+          this.$wait.end('logging')
+        })
     }
   }
 }

@@ -117,6 +117,7 @@
             <v-col cols="1"></v-col>
             <v-col cols="12">
               <vue-editor
+                :editor-toolbar="customToolbar"
                 v-model="content"
                 spellcheck="false"
                 placeholder="Nội dung"
@@ -156,7 +157,59 @@ export default {
     required: false,
     content: null,
     type: null,
-    file: null
+    file: null,
+    customToolbar: [
+      // font size
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      // text direction
+      [
+        {
+          size: [
+            '6px',
+            '8px',
+            '10px',
+            '12px',
+            '14px',
+            '16px',
+            '18px',
+            '20px',
+            '24px',
+            '30px',
+            '32px',
+            '36px'
+          ]
+        }
+      ],
+      ['bold', 'italic', 'underline', 'strike'],
+      // Bold, italic, underline, strikethrough
+      ['blockquote', 'code-block'],
+      // Reference, code block
+      [{ header: 1 }, { header: 2 }],
+      // Title, the form of key-value pairs; 1, 2 represents the font size
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      // list
+      [{ script: 'sub' }, { script: 'super' }],
+      // superscript and subscript
+      [{ indent: '-1' }, { indent: '+1' }],
+      // indent
+      [{ direction: 'rtl' }],
+      // Several levels of title
+      [{ color: [] }, { background: [] }],
+      // font color, font background color
+      [{ font: [] }],
+      // font
+      [{ align: [] }],
+      // alignment
+      ['clean']
+      // Clear font style
+      // ['image', 'video']
+      // Upload pictures, upload videos
+    ],
+    editorSettings: {
+      modules: {
+        Size: true
+      }
+    }
   }),
   watch: {
     open(value) {}
@@ -201,12 +254,7 @@ export default {
     add() {
       let data = {
         content: this.content,
-        files: [
-          {
-            path: this.avatar,
-            type: 'file'
-          }
-        ],
+        files: [this.avatar],
         id: null,
         name: this.title,
         price: this.price.replace(/,/g, ''),

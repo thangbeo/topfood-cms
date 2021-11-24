@@ -157,7 +157,7 @@
                       height="80px"
                       style="object-fit: contain;"
                       v-viewer
-                      :src="`${BASE.URL}${i.path}`"
+                      :src="`${BASE.URL}${i}`"
                     />
                   </template>
                 </template>
@@ -199,7 +199,13 @@
       <v-card-actions>
         <v-spacer />
 
-        <v-btn text height="30px" class="primary" @click="checkValidate">
+        <v-btn
+          text
+          height="30px"
+          class="primary"
+          :loading="$wait.is('logging')"
+          @click="checkValidate"
+        >
           <div class="text-none">Lưu</div>
         </v-btn>
         <v-btn text height="30px" class="secondary" @click="toggle">
@@ -241,6 +247,7 @@ export default {
   props: ['open', 'data'],
   data: () => ({
     BASE,
+    logging: false,
     title: null,
     titleErrors: [],
     items: [],
@@ -362,7 +369,6 @@ export default {
       this.$store
         .dispatch('app/filesUpload', data)
         .then(response => {
-          console.log(response.response.status)
           if (response.response.status === 200) {
             this.avatar = response.response.data.data.path
           } else {
@@ -427,28 +433,37 @@ export default {
       }
     },
     add() {
+      this.$wait.start('logging')
       let data = {
         tagName: this.title,
         id: this.data.id,
         image: this.avatar
       }
-      this.$store.dispatch('tag/updateTag', data).then(response => {
-        if (response.status === 200) {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'success',
-            text: 'Cập nhật thành công'
-          })
-          this.$emit('success')
-          this.toggle()
-        } else {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'warning',
-            text: 'Lỗi hệ thống'
-          })
-        }
-      })
+      this.$store
+        .dispatch('tag/updateTag', data)
+        .then(response => {
+          if (response.status === 200) {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'success',
+              text: 'Cập nhật thành công'
+            })
+            this.$emit('success')
+            this.toggle()
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống'
+            })
+          }
+        })
+        .catch(e => {
+          this.$log.debug(e)
+        })
+        .finally(() => {
+          this.$wait.end('logging')
+        })
     }
   }
 }

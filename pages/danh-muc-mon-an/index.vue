@@ -337,9 +337,10 @@ export default {
           enable: this.status
         })
         .then(response => {
-          if (response.status === 200) {
-            this.items = response.data.data
-            this.pageCount = response.data.pageTotal
+          console.log(response)
+          if (response.response.status === 200) {
+            this.items = response.response.data.data
+            this.pageCount = response.response.data.pageTotal
           } else {
             this.$router.app.$notify({
               group: 'main',

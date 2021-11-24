@@ -105,7 +105,13 @@
       <v-card-actions>
         <v-spacer />
 
-        <v-btn text height="30px" class="primary" @click="checkValidate">
+        <v-btn
+          text
+          height="30px"
+          class="primary"
+          :loading="$wait.is('logging')"
+          @click="checkValidate"
+        >
           <div class="text-none">Thêm</div>
         </v-btn>
         <v-btn text height="30px" class="secondary" @click="toggle">
@@ -136,7 +142,8 @@ export default {
     reset_file: null,
     img: '',
     limited_msg: '',
-    required_img: false
+    required_img: false,
+    logging: false
   }),
   watch: {},
   methods: {
@@ -214,27 +221,36 @@ export default {
       }
     },
     add() {
+      this.$wait.start('logging')
       let data = {
         tagName: this.title,
         image: this.avatar
       }
-      this.$store.dispatch('tag/addTag', data).then(response => {
-        if (response.status === 200) {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'success',
-            text: 'Thêm thành công'
-          })
-          this.$emit('success')
-          this.toggle()
-        } else {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'warning',
-            text: 'Lỗi hệ thống'
-          })
-        }
-      })
+      this.$store
+        .dispatch('tag/addTag', data)
+        .then(response => {
+          if (response.status === 200) {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'success',
+              text: 'Thêm thành công'
+            })
+            this.$emit('success')
+            this.toggle()
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống'
+            })
+          }
+        })
+        .catch(e => {
+          this.$log.debug(e)
+        })
+        .finally(() => {
+          this.$wait.end('logging')
+        })
     }
   }
 }

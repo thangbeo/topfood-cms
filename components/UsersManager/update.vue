@@ -227,10 +227,6 @@ export default {
     validatePass(value, error) {
       if (this.$isNullOrEmpty(value)) {
         this[error] = ['Không được để trống']
-      } else if (value.length < 8) {
-        this[error] = ['Không được nhỏ hơn 8 ký tự']
-      } else if (value.length > 50) {
-        this[error] = ['Không được vượt quá 50 ký tự']
       } else {
         this[error] = []
       }

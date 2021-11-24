@@ -4,6 +4,7 @@
       <v-card class="elevation-12">
         <v-card-text class>
           <v-row class="mt-0" justify="center">
+            <h2 class="black--text">ĐĂNG NHẬP</h2>
             <!-- <v-img :src="logo" contain max-width="250" max-height="250"/> -->
           </v-row>
           <v-divider class="mb-8 mt-6" />
@@ -27,7 +28,13 @@
               @click:append="showPass = !showPass"
             />
             <div class="d-flex justify-center">
-              <v-btn color="primary" type="submit" class="text--none" block>
+              <v-btn
+                :loading="$wait.is('logging')"
+                color="primary"
+                type="submit"
+                class="text--none"
+                block
+              >
                 Đăng nhập
               </v-btn>
             </div>
@@ -88,6 +95,7 @@ export default {
       setTimeout(() => {
         this.$store.dispatch('login/Submit', this.$store.state.app.ip)
       }, 1000)
+      this.$wait.end('logging')
     },
     // quên mật khẩu
     forgot_password() {
