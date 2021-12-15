@@ -9,7 +9,7 @@
     <!-- style="min-height: calc(100vh - 11rem); overflow-x: hidden" -->
     <v-card>
       <v-card-title class="border-title-dialog py-3"
-        >Thêm danh mục</v-card-title
+        >Thêm hash tag</v-card-title
       >
       <v-card-text
         class="pb-0"
@@ -89,7 +89,7 @@
               <v-text-field
                 v-model="title"
                 :error-messages="titleErrors"
-                label="Tên danh mục *"
+                label="Tên hash tag *"
                 outlined
                 dense
                 light
@@ -105,6 +105,10 @@
       <v-card-actions>
         <v-spacer />
 
+        
+        <v-btn text height="30px" class="secondary" @click="toggle">
+          <div class="text-none">Đóng</div>
+        </v-btn>
         <v-btn
           text
           height="30px"
@@ -113,9 +117,6 @@
           @click="checkValidate"
         >
           <div class="text-none">Thêm</div>
-        </v-btn>
-        <v-btn text height="30px" class="secondary" @click="toggle">
-          <div class="text-none">Đóng</div>
         </v-btn>
       </v-card-actions>
     </v-card>

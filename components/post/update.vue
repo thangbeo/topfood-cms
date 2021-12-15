@@ -73,7 +73,7 @@
                       :key="`${idx}+${image}`"
                     >
                       <v-img
-                        :src="`${image.path}`"
+                        :src="`${BASE.URL}${image.path}`"
                         class="ml-2"
                         height="120"
                         width="120"
@@ -106,8 +106,8 @@
                     </div>
                   </div>
                   <v-file-input
-                    id="input_file"
-                    ref="input_file"
+                    id="input_file_update"
+                    ref="input_file_update"
                     :value="reset_file"
                     multiple
                     accept="image/png, image/jpeg, image/bmp"
@@ -119,29 +119,51 @@
             </div>
           </v-row>
           <v-row>
-            <v-col cols="12" class="pt-0">
+            <v-col cols="6" class="py-0">
               <v-autocomplete
                 light
                 deletable-chips
                 chips
-                label="Danh mục món ăn"
+                label="Danh sách hashtag"
                 small-chips
                 no-data-text="Không có dữ liệu"
                 clearable
                 class="fs-14"
                 item-text="tagName"
                 item-value="id"
+                :error-messages="tagErrors"
+                @input="tagErrors = []"
                 outlined
                 multiple
-                hide-details
                 :items="listTag"
                 v-model="tag"
               >
               </v-autocomplete>
             </v-col>
+            <v-col cols="6" class="pt-0">
+              <v-autocomplete
+                light
+                deletable-chips
+                chips
+                label="Danh sách food"
+                small-chips
+                no-data-text="Không có dữ liệu"
+                clearable
+                class="fs-14"
+                item-text="name"
+                item-value="id"
+                outlined
+                :menu-props="{ zIndex: '203' }"
+                multiple
+                hide-details
+                :items="listFood"
+                v-model="food"
+              >
+              </v-autocomplete>
+            </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="pt-0">
               <vue-editor
                 :editor-toolbar="customToolbar"
                 v-model="content"
@@ -149,6 +171,11 @@
                 placeholder="Nội dung"
                 id="vue-2-editor-fix-height-3"
               ></vue-editor>
+              <div class="pt-0">
+                <div class="fs-12 red--text px-4" v-if="contentDescription">
+                  Vui lòng nhập nội dung
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -156,6 +183,10 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
+
+        <v-btn text height="30px" class="secondary" @click="toggle">
+          <div class="text-none">Đóng</div>
+        </v-btn>
         <v-btn
           text
           height="30px"
@@ -164,9 +195,6 @@
           @click="checkValidate"
         >
           <div class="text-none">Lưu</div>
-        </v-btn>
-        <v-btn text height="30px" class="secondary" @click="toggle">
-          <div class="text-none">Đóng</div>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -177,7 +205,7 @@
 import Vue from 'vue'
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
-
+import Cookies from 'js-cookie'
 Vue.use(Viewer)
 import BASE from '~/assets/configurations/BASE_URL'
 import IconSelectFile from '~/components/icon/SelectFile'
@@ -264,7 +292,11 @@ export default {
     path: null,
     required_img: false,
     tag: [],
-    listTag: []
+    listTag: [],
+    listFood: [],
+    food: [],
+    tagErrors: [],
+    contentDescription: false
   }),
   watch: {
     open() {
@@ -282,10 +314,35 @@ export default {
         this.tag.push(this.data.tags[i].id)
       }
 
+      this.food = []
+      for (let i = 0; i < this.data.foods.length; i++) {
+        this.food.push(this.data.foods[i].id)
+      }
+
       this.get_list()
+      this.getListFood()
     }
   },
   methods: {
+    getListFood() {
+      this.$store
+        .dispatch('tag/listFood', {
+          page: 0,
+          accountId: Cookies.get('userId'),
+          pageSize: 10000
+        })
+        .then(response => {
+          if (response.response.status === 200) {
+            this.listFood = response.response.data.data.data
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống'
+            })
+          }
+        })
+    },
     remove(item) {
       const index = this.tag.indexOf(item.id)
       if (index >= 0) this.tag.splice(index, 1)
@@ -316,7 +373,7 @@ export default {
       this.reset_file = []
     },
     select_file() {
-      return window.document.getElementById('input_file').click()
+      return window.document.getElementById('input_file_update').click()
     },
 
     inputFile(files) {
@@ -345,7 +402,7 @@ export default {
           .then(response => {
             if (response.response.status === 200) {
               this.path = response.response.data.data.path
-              this.slider_id.unshift({ path: `${BASE.URL}${this.path}` })
+              this.slider_id.unshift({ path: `${this.path}` })
             }
           })
           .catch(e => {
@@ -361,9 +418,12 @@ export default {
 
     reset() {
       this.content = null
-
       this.slider_id = []
+      this.contentDescription = false
       this.tag = null
+      this.food = null
+      this.error_msg_slider = ''
+      this.tagErrors = []
     },
 
     checkValidate() {
@@ -373,43 +433,55 @@ export default {
       }
     },
     add() {
-      this.$wait.start('logging')
-      let files = []
+      let hasErrors = false
+      if (this.$isNullOrEmpty(this.content)) {
+        hasErrors = true
+        this.contentDescription = true
+      }
+      if ((this.tag || []).length === 0) {
+        hasErrors = true
+        this.tagErrors = ['Vui lòng chọn hashtag']
+      }
+      if (!hasErrors) {
+        this.$wait.start('logging')
+        let files = []
 
-      for (let i = 0; i < this.slider_id.length; i++) {
-        files.push(this.slider_id[i].path)
+        for (let i = 0; i < this.slider_id.length; i++) {
+          files.push(this.slider_id[i].path)
+        }
+        let data = {
+          content: this.content,
+          files,
+          id: this.data.id,
+          tagIds: this.tag,
+          foodIds: this.food
+        }
+        this.$store
+          .dispatch('post/updatePost', data)
+          .then(response => {
+            if (response.response.status === 200) {
+              this.$router.app.$notify({
+                group: 'main',
+                type: 'success',
+                text: 'Cập nhật thành công'
+              })
+              this.$emit('success')
+              this.toggle()
+            } else {
+              this.$router.app.$notify({
+                group: 'main',
+                type: 'warning',
+                text: 'Lỗi hệ thống'
+              })
+            }
+          })
+          .catch(e => {
+            this.$log.debug(e)
+          })
+          .finally(() => {
+            this.$wait.end('logging')
+          })
       }
-      let data = {
-        content: this.content,
-        files,
-        id: this.data.id,
-        tagIds: this.tag
-      }
-      this.$store
-        .dispatch('post/updatePost', data)
-        .then(response => {
-          if (response.response.status === 200) {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'success',
-              text: 'Cập nhật thành công'
-            })
-            this.$emit('success')
-            this.toggle()
-          } else {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'warning',
-              text: 'Lỗi hệ thống'
-            })
-          }
-        })
-        .catch(e => {
-          this.$log.debug(e)
-        })
-        .finally(() => {
-          this.$wait.end('logging')
-        })
     }
   }
 }

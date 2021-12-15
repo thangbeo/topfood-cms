@@ -15,10 +15,15 @@ const state = () => ({
     url: '/api/tag',
     method: 'PUT'
   },
+  // detailTag: {
+  //   url: '/api/tag',
+  //   method: 'GET'
+  // },
   detailTag: {
-    url: '/api/tag',
+    url: '/api/tag/store',
     method: 'GET'
   },
+
   deleteTag: {
     url: '/api/tag',
     method: 'DELETE'

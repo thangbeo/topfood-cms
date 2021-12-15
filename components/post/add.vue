@@ -116,12 +116,13 @@
             </div>
           </v-row>
           <v-row>
-            <v-col cols="12" class="pt-0">
+            <v-col cols="6" class="py-0">
               <v-autocomplete
+                ref="tag"
                 light
                 deletable-chips
                 chips
-                label="Danh mục món ăn"
+                label="Danh sách hashtag"
                 small-chips
                 no-data-text="Không có dữ liệu"
                 clearable
@@ -131,22 +132,52 @@
                 outlined
                 :menu-props="{ zIndex: '203' }"
                 multiple
-                hide-details
+                :error-messages="tagErrors"
+                @input="tagErrors = []"
                 :items="listTag"
                 v-model="tag"
+                @blur="backToTop"
+              >
+              </v-autocomplete>
+            </v-col>
+            <v-col cols="6" class="pt-0">
+              <v-autocomplete
+                light
+                deletable-chips
+                chips
+                label="Danh sách food"
+                small-chips
+                no-data-text="Không có dữ liệu"
+                clearable
+                class="fs-14"
+                item-text="name"
+                item-value="id"
+                outlined
+                :menu-props="{ zIndex: '203' }"
+                multiple
+                hide-details
+                :items="listFood"
+                v-model="food"
               >
               </v-autocomplete>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="pt-0">
               <vue-editor
+                ref="content"
                 :editor-toolbar="customToolbar"
                 v-model="content"
                 spellcheck="false"
                 placeholder="Nội dung"
                 id="vue-2-editor-fix-height-3"
+                @blur="backToTop"
               ></vue-editor>
+              <div class="pt-0">
+                <div class="fs-12 red--text px-4" v-if="contentDescription">
+                  Vui lòng nhập nội dung
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -155,6 +186,9 @@
       <v-card-actions>
         <v-spacer />
 
+        <v-btn text height="30px" class="secondary" @click="toggle">
+          <div class="text-none">Đóng</div>
+        </v-btn>
         <v-btn
           text
           height="30px"
@@ -164,11 +198,9 @@
         >
           <div class="text-none">Thêm</div>
         </v-btn>
-        <v-btn text height="30px" class="secondary" @click="toggle">
-          <div class="text-none">Đóng</div>
-        </v-btn>
       </v-card-actions>
     </v-card>
+    <div v-show="false" ref="to_top" @click="$vuetify.goTo(-10000)"></div>
   </v-dialog>
 </template>
 
@@ -176,7 +208,7 @@
 import Vue from 'vue'
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
-
+import Cookies from 'js-cookie'
 Vue.use(Viewer)
 import BASE from '~/assets/configurations/BASE_URL'
 import IconSelectFile from '~/components/icon/SelectFile'
@@ -241,12 +273,13 @@ export default {
       }
     },
     BASE,
+    contentDescription: false,
     logging: false,
     maxrequied: 6,
     title: null,
     avatar: null,
     content: null,
-    img: null,
+
     file: null,
     titleErrors: [],
     hidden: false,
@@ -260,20 +293,46 @@ export default {
     img_slider: [],
     slider_id: [],
     is_slider_id: [],
-
+    listFood: [],
     required_img: false,
     tag: [],
-    listTag: []
+    food: [],
+    listTag: [],
+    tagErrors: []
   }),
   watch: {
     open() {
       this.get_list()
+      this.getListFood()
     }
   },
   methods: {
+    backToTop() {
+      this.$refs.to_top.click()
+    },
     remove(item) {
       const index = this.tag.indexOf(item.id)
       if (index >= 0) this.tag.splice(index, 1)
+    },
+
+    getListFood() {
+      this.$store
+        .dispatch('tag/listFood', {
+          page: 0,
+          accountId: Cookies.get('userId'),
+          pageSize: 10000
+        })
+        .then(response => {
+          if (response.response.status === 200) {
+            this.listFood = response.response.data.data.data
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống'
+            })
+          }
+        })
     },
     get_list() {
       this.$store
@@ -338,9 +397,12 @@ export default {
 
     reset() {
       this.content = null
-
       this.slider_id = []
-      this.tag = null
+      this.contentDescription = false
+      this.tag = []
+      this.food = []
+      this.error_msg_slider = ''
+      this.tagErrors = []
     },
 
     checkValidate() {
@@ -350,43 +412,58 @@ export default {
       }
     },
     add() {
-      this.$wait.start('logging')
-      let files = []
+      let hasErrors = false
+      if (this.$isNullOrEmpty(this.content)) {
+        hasErrors = true
+        this.contentDescription = true
+        this.$refs.content.focus()
+      }
+      if ((this.tag || []).length === 0) {
+        hasErrors = true
+        this.tagErrors = ['Vui lòng chọn hashtag']
+        this.$refs.tag.focus()
+      }
+      if (!hasErrors) {
+        this.$wait.start('logging')
+        let files = []
 
-      for (let i = 0; i < this.slider_id.length; i++) {
-        files.push(this.slider_id[i].path)
+        for (let i = 0; i < this.slider_id.length; i++) {
+          files.push(this.slider_id[i].path)
+        }
+        let data = {
+          content: this.content,
+          files,
+          id: null,
+          tagIds: this.tag,
+          foodIds: this.food
+        }
+        this.$store
+          .dispatch('post/addPost', data)
+          .then(response => {
+            if (response.response.status === 200) {
+              this.$router.app.$notify({
+                group: 'main',
+                type: 'success',
+                text: 'Thêm thành công'
+              })
+              this.$emit('success')
+
+              this.toggle()
+            } else {
+              this.$router.app.$notify({
+                group: 'main',
+                type: 'warning',
+                text: 'Lỗi hệ thống'
+              })
+            }
+          })
+          .catch(e => {
+            this.$log.debug(e)
+          })
+          .finally(() => {
+            this.$wait.end('logging')
+          })
       }
-      let data = {
-        content: this.content,
-        files,
-        id: null,
-        tagIds: this.tag
-      }
-      this.$store
-        .dispatch('post/addPost', data)
-        .then(response => {
-          if (response.response.status === 200) {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'success',
-              text: 'Thêm thành công'
-            })
-            this.$emit('success')
-            this.toggle()
-          } else {
-            this.$router.app.$notify({
-              group: 'main',
-              type: 'warning',
-              text: 'Lỗi hệ thống'
-            })
-          }
-        })
-        .catch(e => {
-          this.$log.debug(e)
-        })
-        .finally(() => {
-          this.$wait.end('logging')
-        })
     }
   }
 }

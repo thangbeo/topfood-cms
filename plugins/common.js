@@ -26,7 +26,7 @@ const options = {
   separator: '|',
   showConsoleColors: true
 }
-Vue.use(Vue2Editor)
+Vue.use(Vue2Editor, Quill)
 Vue.use(VueLogger, options)
 Vue.use(Notifications)
 Vue.use(vueXlsxTable, { rABS: false })
@@ -54,9 +54,9 @@ sizeStyle.whitelist = [
   '24px',
   '30px',
   '32px',
-  '36px',
+  '36px'
 ]
 Quill.register(sizeStyle, true)
 
 import VueMask from 'v-mask'
-Vue.use(VueMask);
+Vue.use(VueMask)

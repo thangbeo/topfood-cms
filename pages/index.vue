@@ -1,14 +1,23 @@
 <template>
-  <v-layout column justify-center align-center>
-    <div class="chart-container">
-      <client-only> </client-only>
+  <div>
+    <div v-if="role === 'ROLE_ADMIN'">
+      <thongKeAdmin></thongKeAdmin>
     </div>
-  </v-layout>
+    <div v-if="role === 'ROLE_STORE'">
+      <thongKeStore></thongKeStore>
+    </div>
+  </div>
 </template>
 
 <script>
-import Rules from '~/assets/configurations/Rules.js'
+import thongKeAdmin from '~/components/ThongKe/thongKeAdmin.vue'
+import thongKeStore from '~/components/ThongKe/thongKeStore.vue'
+import Cookies from 'js-cookie'
 export default {
+  components: {
+    thongKeAdmin,
+    thongKeStore
+  },
   transition(to, from) {
     if (!from) {
       return 'slide-x-transition'
@@ -17,29 +26,13 @@ export default {
   },
   data() {
     return {
-      Rules,
-      tab: 0
-    }
-  },
-  components: {},
-  computed: {
-    breakPoint() {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-          return 'mobile'
-        case 'sm':
-          return 'desktop'
-        case 'md':
-          return 'desktop'
-        case 'lg':
-          return 'desktop'
-        case 'xl':
-          return 'desktop'
-      }
+      role: null
     }
   },
 
-  methods: {}
+  created() {
+    this.role = Cookies.get('userGroup')
+  }
 }
 </script>
 

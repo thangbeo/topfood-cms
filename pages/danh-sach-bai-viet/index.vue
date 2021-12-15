@@ -77,7 +77,11 @@
                   width="160"
                   height="80px"
                   style="object-fit: contain;"
-                  :src="`${i}`"
+                  :src="
+                    i.includes('http://58.84.1.32:8080')
+                      ? `${i}`
+                      : `${BASE.URL}${i}`
+                  "
                 />
               </template>
             </div>
@@ -97,6 +101,13 @@
           <template v-for="(i, index) in item.tags">
             <div :key="i.id" class="pl-10  py-1">
               <span>{{ index + 1 }}.</span><span>{{ i.tagName }}</span>
+            </div>
+          </template>
+        </template>
+        <template v-slot:[`item.foods`]="{ item }">
+          <template v-for="(i, index) in item.foods">
+            <div :key="i.id" class="pl-10  py-1">
+              <span>{{ index + 1 }}.</span><span>{{ i.name }}</span>
             </div>
           </template>
         </template>
@@ -132,7 +143,7 @@
       </v-data-table>
     </client-only>
 
-    <pagination
+    <!-- <pagination
       class="mt-1"
       ref="Pagination"
       :pageCount="pageCount"
@@ -141,7 +152,7 @@
       @changePage="changePage"
       @changePageSize="changePageSize"
       depressed="true"
-    ></pagination>
+    ></pagination> -->
 
     <!-- thêm mới -->
     <add @success="get_list" :open="openAdd" @toggle="openAdd = !openAdd"></add>
@@ -200,6 +211,12 @@ export default {
         value: 'tags',
         width: 100
       },
+      {
+        text: 'Danh sách món ăn',
+        sortable: false,
+        value: 'foods',
+        width: 100
+      },
       // { text: 'Tiêu đề ', sortable: false, value: 'tagName', width: 100 },
 
       {
@@ -223,7 +240,7 @@ export default {
     BASE,
     page: 0,
     pageCount: 0,
-    pageSize: 10,
+    pageSize: 500,
     total_item: 0,
     openAdd: false,
     openDelete: false,
@@ -299,7 +316,6 @@ export default {
     //     })
     // },
     search() {
-      this.page = 0
       this.get_list()
     },
     OpenUpdate(value) {
@@ -310,19 +326,19 @@ export default {
       return this.page * this.pageSize + this.items.indexOf(item) + 1
       // return this.items.indexOf(item) + 1
     },
-    changePageSize(pageSizes) {
-      if (pageSizes !== this.pageSize) {
-        this.pageSize = pageSizes
-        this.page = 0
-        this.$refs.Pagination.reset()
-        this.get_list()
-      }
-    },
-    changePage(value) {
-      this.page = value
-      this.$refs.Pagination.reset()
-      this.get_list()
-    },
+    // changePageSize(pageSizes) {
+    //   if (pageSizes !== this.pageSize) {
+    //     this.pageSize = pageSizes
+    //     this.page = 0
+    //     this.$refs.Pagination.reset()
+    //     this.get_list()
+    //   }
+    // },
+    // changePage(value) {
+    //   this.page = value
+    //   this.$refs.Pagination.reset()
+    //   this.get_list()
+    // },
     get_list() {
       this.$store
         .dispatch('post/getList', {

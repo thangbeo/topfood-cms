@@ -1,7 +1,7 @@
 <template>
   <v-col
     :class="(depressed && 'depressed-pagination') + ' pt-0 pb-0'"
-    cols="auto"
+    cols="12"
   >
     <v-row no-gutters class="justify-sm-end justify-center">
       <v-col class="d-flex align-center justify-end col-auto">
@@ -13,11 +13,10 @@
             @change="changePageSize"
             label="Bản ghi"
             outlined
-            no-data-text="Không có dữ liệu"
             dense
             hide-details
             class="mt-1 mr-2"
-          />
+          ></v-select>
         </div>
         <div style="width: 150px" class="mt-1">
           <!-- Nhập trang cần đến -->
@@ -34,26 +33,26 @@
             <template v-slot:append-outer>
               <!-- Nút bấm chuyển trang -->
               <v-btn
+                v-ripple
                 color="primary"
                 style="margin-top: -6px"
                 @click="changePage"
                 depressed
+                >Đi</v-btn
               >
-                Đi
-              </v-btn>
             </template>
           </v-text-field>
         </div>
       </v-col>
-      <v-col class="col-auto" :key="pageCount" style="min-width: 10%">
-        <div class="ml-2">
+      <v-col class="col-auto" :key="pageCount">
+        <div>
           <!-- Phân trang theo nút -->
           <v-pagination
             :value="page"
             :length="pageCount"
             @input="changePageButton($event)"
-            total-visible="10"
-          />
+            :total-visible="10"
+          ></v-pagination>
         </div>
       </v-col>
     </v-row>
@@ -65,35 +64,37 @@ export default {
   props: ['pageCount', 'page', 'pageSize', 'depressed'],
   data() {
     return {
-      customPage: 0,
+      customPage: 1,
       rerender: Math.random()
     }
   },
 
   methods: {
     changePageSize(value) {
-      this.customPage = 0
+      this.customPage = 1
       this.$emit('changePageSize', value)
       // this.getTransationsHistory()
     },
     checkPage(e) {
       let value = e.target.value
-      if (isNaN(value) || parseInt(value) <= -1) {
+      if (isNaN(value) || parseInt(value) <= 0) {
         this.customPage = 0
       } else {
         this.customPage = parseInt(value)
       }
       this.changePage(parseInt(value))
+      // this.$emit('changePage')
+      // this.$emit('changePageSize')
     },
     changePage(value) {
       if (isNaN(this.customPage)) {
-        this.customPage = 0
+        this.customPage = 1
         this.$emit('changePage', this.customPage)
-      } else if (this.customPage < 0) {
-        this.customPage = 0
+      } else if (this.customPage < 1) {
+        this.customPage = 1
         this.$emit('changePage', this.customPage)
       } else if (this.customPage > this.pageCount) {
-        this.customPage = 0
+        this.customPage = 1
         this.$emit('changePage', this.customPage)
       } else {
         this.$emit('changePage', parseInt(this.customPage))
@@ -107,7 +108,7 @@ export default {
       // this.getTransationsHistory()
     },
     reset() {
-      this.customPage = 0
+      this.customPage = 1
     }
   },
   watch: {
@@ -124,9 +125,8 @@ export default {
     box-shadow: none !important;
     border: thin solid rgba(0, 0, 0, 0.12);
     height: 36px;
-    /*width: 36px;*/
+    width: fit-content;
   }
-
   .v-pagination__item:hover {
     background-color: rgba(0, 0, 0, 0.12) !important;
   }
@@ -135,7 +135,7 @@ export default {
     box-shadow: none !important;
     border: thin solid rgba(0, 0, 0, 0.12);
     height: 36px;
-    width: 36px;
+    width: fit-content;
   }
 
   .v-pagination__navigation:hover {
@@ -143,8 +143,8 @@ export default {
   }
 
   .v-pagination__item--active:hover {
-    background-color: #5daaac !important;
-    border-color: #5daaac !important;
+    background-color: #42a5f5 !important;
+    border-color: #42a5f5 !important;
   }
 }
 </style>

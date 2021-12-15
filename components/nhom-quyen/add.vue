@@ -41,10 +41,12 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
+
+       
         <v-btn text height="30px" class="secondary" @click="toggle">
           <div class="text-none">Đóng</div>
         </v-btn>
-        <v-btn text height="30px" class="primary" @click="checkValidate">
+         <v-btn text height="30px" class="primary" @click="checkValidate">
           <div class="text-none">Thêm</div>
         </v-btn>
       </v-card-actions>

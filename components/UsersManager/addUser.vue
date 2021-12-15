@@ -84,22 +84,6 @@
             </v-menu>
           </v-col>
           <v-col cols="12" sm="6" md="6" class="py-0">
-            <v-autocomplete
-              v-model="groups"
-              :items="listAccount"
-              :error-messages="groupsErrors"
-              item-text="text"
-              item-value="value"
-              label="Loại tài khoản *"
-              no-data-text="Không có dữ liệu"
-              outlined
-              dense
-              light
-              @input="groupsErrors = []"
-            />
-          </v-col>
-
-          <v-col cols="12" sm="6" md="6" class="py-0">
             <v-text-field
               v-model="email"
               :error-messages="emailErrors"
@@ -130,7 +114,12 @@
       <v-card-actions>
         <v-spacer />
 
-        <v-btn
+     
+        <v-btn text height="30px" class="secondary" @click="toggle">
+          <div class="text-none">Đóng</div>
+        </v-btn>
+
+           <v-btn
           text
           height="30px"
           class="primary"
@@ -138,9 +127,6 @@
           @click="checkValidate"
         >
           <div class="text-none">Thêm</div>
-        </v-btn>
-        <v-btn text height="30px" class="secondary" @click="toggle">
-          <div class="text-none">Đóng</div>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -172,8 +158,7 @@ export default {
     // addressErrors: [],
     partner: null,
     partnerErrors: [],
-    groups: null,
-    groupsErrors: [],
+    groups: 'ROLE_USER',
 
     status: 1,
     disabled_partner: false,
@@ -181,26 +166,25 @@ export default {
     listGroupUsers: [],
     activePicker: null,
     dateOfBirth: null,
-    listAccount: [
-      {
-        text: 'Tài khoản người dùng',
-        value: 'ROLE_USER'
-      },
-      {
-        text: 'Tài khoản Store',
-        value: 'ROLE_STORE'
-      }
-    ]
+    city: null,
+    listCity: [],
+    cityErrors: []
   }),
   watch: {
     open(value) {
       if (value) {
+        this.getListCity()
       } else {
         this.reset()
       }
     }
   },
   methods: {
+    getListCity() {
+      this.$store.dispatch('users/getlistCity').then(response => {
+        this.listCity = response.data
+      })
+    },
     // danh sách quyền
     // get_list() {
     //   this.$store
@@ -255,6 +239,9 @@ export default {
       this.groupsErrors = []
       this.dateOfBirth = null
       this.status = 1
+      this.city = null
+      this.cityErrors = []
+
       this.menu_date = moment().format('YYYY-MM-DD')
     },
 
@@ -358,10 +345,17 @@ export default {
         this.phoneErrors = 'Số điện thoại không hợp lệ'
       }
 
-      if (this.$isNullOrEmpty(this.groups)) {
-        hasErrors = true
-        this.groupsErrors = ['Không được để trống']
-      }
+      // if (this.$isNullOrEmpty(this.groups)) {
+      //   hasErrors = true
+      //   this.groupsErrors = ['Không được để trống']
+      // } else {
+      //   if (this.groups === 'ROLE_STORE') {
+      //     if (this.$isNullOrEmpty(this.city)) {
+      //       this.cityErrors = ['Không được để trống']
+      //       hasErrors = true
+      //     }
+      //   }
+      // }
 
       if (!hasErrors) {
         this.add()
@@ -375,6 +369,7 @@ export default {
         password: this.password.trim(),
         name: this.full_name.trim(),
         email: this.email.trim(),
+        city: this.city,
         birthday: this.$isNullOrEmpty(this.dateOfBirth)
           ? ''
           : moment(this.dateOfBirth).format(),

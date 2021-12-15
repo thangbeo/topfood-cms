@@ -41,6 +41,8 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
+
+        
         <v-btn text height="30px" class="secondary" @click="toggle">
           <div class="text-none">Đóng</div>
         </v-btn>

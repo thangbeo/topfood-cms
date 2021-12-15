@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-card-title class="border-title-dialog py-3"
-        >Cập nhật danh mục</v-card-title
+        >Cập nhật hash tag</v-card-title
       >
       <v-card-text style="max-height: calc(100vh - 13rem); overflow-x: hidden">
         <v-container class="pt-8 pb-5" fluid>
@@ -52,7 +52,7 @@
                 <img
                   v-viewer
                   style=" height:auto; width: 150px;  object-fit: contain;"
-                  :src="`${BASE.URL}${avatar}`"
+                  :src="avatar.includes('http://58.84.1.32:8080') ?  `${BASE.URL}${avatar}` : `${avatar}`"
                 />
 
                 <v-btn
@@ -86,7 +86,7 @@
               <v-text-field
                 v-model="title"
                 :error-messages="titleErrors"
-                label="Tên danh mục *"
+                label="Tên hash tag *"
                 outlined
                 dense
                 light
@@ -199,7 +199,11 @@
       <v-card-actions>
         <v-spacer />
 
-        <v-btn
+      
+        <v-btn text height="30px" class="secondary" @click="toggle">
+          <div class="text-none">Đóng</div>
+        </v-btn>
+          <v-btn
           text
           height="30px"
           class="primary"
@@ -207,9 +211,6 @@
           @click="checkValidate"
         >
           <div class="text-none">Lưu</div>
-        </v-btn>
-        <v-btn text height="30px" class="secondary" @click="toggle">
-          <div class="text-none">Đóng</div>
         </v-btn>
       </v-card-actions>
       <yes-no-alert
@@ -268,6 +269,7 @@ export default {
       if (value) {
         this.role = Cookies.get('userGroup')
         this.avatar = this.data.image
+        
         this.detail()
       }
     }

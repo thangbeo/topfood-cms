@@ -61,7 +61,17 @@ const actions = {
     })
     return response
   },
+  async getlistCity(vueContext, payload) {
+    const response = await this.$axios({
+      url:
+        'https://provinces.open-api.vn/api/p/?fbclid=IwAR3IV4Texy0AYH12qZt_NEkeSuiWwvuZG4vP5xmu0G68nd8hWhCvH1Pv-bA',
 
+      params: {
+        ...payload
+      }
+    })
+    return response
+  },
   async accountAdminActive(vueContext, id) {
     const response = await this.$axios({
       url: `${vueContext.state.accountAdminActive.url}/${id}`,

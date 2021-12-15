@@ -4,7 +4,6 @@
       <v-data-table
         :headers="headers"
         :items="items"
-        :items-per-page="pageSize"
         hide-default-footer
         :loading="$wait.is('loadingUser')"
         loading-text="Xin chờ..."
@@ -13,6 +12,7 @@
         no-data-text="Không có dữ liệu"
         class="elevation-0 custom_header_table"
         fixed-header
+        :items-per-page="pageSize"
         light
       >
         <template v-slot:top>
@@ -23,7 +23,7 @@
 
             <v-text-field
               v-model="tagName"
-              label="Tên danh mục"
+              label="Tên Hash Tag"
               class="pr-2 fs-14"
               style="max-width: 250px"
               dense
@@ -93,8 +93,13 @@
               height="80px"
               style="object-fit: contain;"
               v-viewer
-              :src="`${BASE.URL}${item.image}`"
+              :src="
+                item.image.includes('/files/')
+                  ? `${BASE.URL}${item.image}`
+                  : item.image
+              "
             />
+
             <img
               v-else
               width="160"
@@ -135,17 +140,6 @@
         </template>
       </v-data-table>
     </client-only>
-
-    <pagination
-      class="mt-1"
-      ref="Pagination"
-      :pageCount="pageCount"
-      :page="page"
-      :pageSize="pageSize"
-      @changePage="changePage"
-      @changePageSize="changePageSize"
-      depressed="true"
-    ></pagination>
 
     <!-- thêm mới -->
     <add @success="get_list" :open="openAdd" @toggle="openAdd = !openAdd"></add>
@@ -228,7 +222,7 @@ export default {
     BASE,
     page: 0,
     pageCount: 0,
-    pageSize: 10,
+    pageSize: 5000,
     total_item: 0,
     openAdd: false,
     openDelete: false,
@@ -315,19 +309,26 @@ export default {
       return this.page * this.pageSize + this.items.indexOf(item) + 1
       // return this.items.indexOf(item) + 1
     },
-    changePageSize(pageSizes) {
-      if (pageSizes !== this.pageSize) {
-        this.pageSize = pageSizes
-        this.page = 0
-        this.$refs.Pagination.reset()
-        this.get_list()
-      }
-    },
-    changePage(value) {
-      this.page = value
-      this.$refs.Pagination.reset()
-      this.get_list()
-    },
+    // changePageSize(pageSizes) {
+    //   if (pageSizes !== this.pageSize) {
+    //     this.pageSize = pageSizes
+    //     this.page = 1
+    //     this.$refs.Pagination.reset()
+    //     this.get_list()
+    //   }
+    // },
+    // changePage(value) {
+    //   this.page = value
+    //   this.$refs.Pagination.reset()
+    //   this.get_list()
+    // },
+    // changePage(value) {
+    //   this.page = value
+    // },
+    // changePagesize(value) {
+    //   this.pageSize = value
+    //   this.$refs.pagination.reset()
+    // },
     get_list() {
       this.$store
         .dispatch('tag/getListTag', {
@@ -337,10 +338,9 @@ export default {
           enable: this.status
         })
         .then(response => {
-          console.log(response)
           if (response.response.status === 200) {
             this.items = response.response.data.data
-            this.pageCount = response.response.data.pageTotal
+            // this.pageCount = response.response.data.pageTotal
           } else {
             this.$router.app.$notify({
               group: 'main',

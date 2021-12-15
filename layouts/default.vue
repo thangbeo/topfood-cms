@@ -188,7 +188,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item @click="logout" color="primary">
+          <v-list-item @click="openLogout = true" color="primary">
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
@@ -200,7 +200,13 @@
         </v-list>
       </v-navigation-drawer>
     </div>
-
+    <yes-no-alert
+      :open="openLogout"
+      alert-msg="Bạn có chắc chắn muốn đăng xuất không?"
+      @toggle="openLogout = !openLogout"  
+      @OK="logout"
+    >
+    </yes-no-alert>
     <Dialog
       :open="openChangePass"
       :CRUD="allowAccess"
@@ -296,6 +302,7 @@ export default {
       drawer: true,
       fixed: false,
       role: null,
+      openLogout : false,
       // watermark,
 
       accountMenuItems: [],
@@ -326,25 +333,11 @@ export default {
             {
               page_url: 'danh-muc-mon-an',
               page_icon: '',
-              page_name: 'Quản lý danh mục món ăn '
+              page_name: 'Danh sách Hash Tag '
             }
           ]
         }
-        // {
-        //   page_name: 'Bài viết',
-        //   child: [
-        //     // {
-        //     //   page_url: '',
-        //     //   page_icon: '',
-        //     //   page_name: 'Quản lý danh mục bài viết'
-        //     // },
-        //     {
-        //       page_url: 'danh-sach-bai-viet',
-        //       page_icon: '',
-        //       page_name: 'Danh sách bài viết'
-        //     }
-        //   ]
-        // }
+     
       ],
       topmenuStore: [
         {
@@ -358,18 +351,14 @@ export default {
             {
               page_url: 'danh-muc-mon-an',
               page_icon: '',
-              page_name: 'Quản lý danh mục món ăn '
+              page_name: 'Danh sách Hash Tag '
             }
           ]
         },
         {
           page_name: 'Bài viết',
           child: [
-            // {
-            //   page_url: '',
-            //   page_icon: '',
-            //   page_name: 'Quản lý danh mục bài viết'
-            // },
+           
             {
               page_url: 'danh-sach-bai-viet',
               page_icon: '',
@@ -383,7 +372,7 @@ export default {
       rightDrawer: false,
       title: 'PNE-MBF',
       username: '',
-      // data đổi mật khẩu tuan.pham
+      
       openChangePass: false,
       allowAccess: true,
       showPassword: false,
@@ -424,19 +413,9 @@ export default {
     },
     getMenuByParent(parent_id) {
       console.log(parent_id)
-      // if (!this.$isServer) {
-      //   let lstAccessMenu = []
-      //   let pages = this.$store.state.app.roles
-      //   Array.from(pages).forEach(m => {
-      //     if (m.parent_id === parent_id) lstAccessMenu.push(m)
-      //   })
-      //   //console.log(parent_id, pages, lstAccessMenu)
-      //   return lstAccessMenu
-      //   //console.log(parent_id, lstAccessMenu)
-      // }
     },
-    // đổi mật khẩu tuan.pham
-    // toggle dialog change pass
+   
+
     toggleChangePass() {
       this.selectedItem = {
         password: {

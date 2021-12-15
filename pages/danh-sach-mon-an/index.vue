@@ -17,7 +17,7 @@
       >
         <template v-slot:top>
           <v-app-bar flat color="white">
-            <v-toolbar-title>Món ăn</v-toolbar-title>
+           
             <div class="flex-grow-1"></div>
             <!-- <v-text-field
               v-model="search"

@@ -4,8 +4,8 @@
       <v-data-table
         :headers="headers"
         :items="items"
-        :items-per-page="itemsPerPage"
         hide-default-footer
+        items-per-page="500"
         :loading="$wait.is('loadingUser')"
         loading-text="Xin chờ..."
         sort-by="stt"
@@ -23,7 +23,7 @@
 
             <v-text-field
               v-model="title"
-              label="Tên luật"
+              label="Tiêu đề"
               class="pr-2"
               style="max-width: 250px"
               dense
@@ -68,17 +68,16 @@
       </v-data-table>
     </client-only>
 
-    <pagination
+    <!-- <pagination
       class="mt-1"
       ref="pagination"
       :pageCount="pageCount"
       :page="page"
-      :pageSize="itemsPerPage"
+      :pageSize="pageSize"
       @changePage="changePage"
-      @changePageSize="changePageSize"
+      @changePageSize="changePagesize"
       depressed="true"
-    />
-
+    ></pagination> -->
     <!-- thêm mới -->
     <add @Success="get_list" :open="openAdd" @toggle="openAdd = !openAdd"></add>
 
@@ -114,10 +113,9 @@ export default {
         width: 80
       }
     ],
-    startIndex: 1,
-    page: 0,
     pageCount: 0,
-    itemsPerPage: 10,
+    page: 0,
+    pageSize: 20,
     openAdd: false,
     openUpdate: false,
     user_detail: '',
@@ -144,29 +142,39 @@ export default {
       this.openUpdated = true
     },
     getItemIndex(item) {
-      // return (this.page - 1) * this.itemsPerPage + this.items.indexOf(item) + 1
+      // return (this.page - 1) * this.pageSize + this.items.indexOf(item) + 1
       return this.items.indexOf(item) + 1
     },
-    changePageSize(value) {
-      this.page = 0
-      this.itemsPerPage = value
-      this.$refs.pagination.reset()
-      this.get_list()
-    },
-    changePage(value) {
-      this.page = value
-      this.get_list()
-    },
+    // changePage(value) {
+    //   this.page = value
+    // },
+    // changePagesize(value) {
+    //   this.pageSize = value
+    //   this.$refs.pagination.reset()
+    // },
+    // changePageSize(pageSizes) {
+    //   if (pageSizes !== this.pageSize) {
+    //     this.pageSize = pageSizes
+    //     this.page = 0
+    //     this.$refs.pagination.reset()
+    //     this.get_list()
+    //   }
+    // },
+    // changePage(value) {
+    //   this.page = value
+    //   this.$refs.pagination.reset()
+    //   this.get_list()
+    // },
     get_list() {
       this.$store
         .dispatch('rule/getListRule', {
-          pageSize: this.itemsPerPage,
+          pageSize: this.pageSize,
           page: this.page,
           title: this.title
         })
         .then(response => {
-          if (response.status === 200) {
-            this.items = response.data.data
+          if (response.response.status === 200) {
+            this.items = response.response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',

@@ -16,7 +16,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    titleTemplate: 'TOPFOOD - CMS',
+    titleTemplate: 'Quản trị TOPFOOD',
     // titleTemplate: '%s - ' + 'XSĐT XSKT Content Management System',
     // title: process.env.npm_package_name || '',
     meta: [

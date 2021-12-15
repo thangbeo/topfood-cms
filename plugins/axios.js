@@ -10,6 +10,11 @@ export default function(context) {
         response: response
       }
     }
+    // else {
+    //   if (response.data.message.includes('Hành động bị từ chối.')) {
+    //     context.app.$logout(context.app.router)
+    //   }
+    // }
   })
   context.$axios.onError(error => {
     context.app.router.app.$log.error('Có lỗi/exception: ', {
