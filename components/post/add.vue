@@ -118,7 +118,6 @@
           <v-row>
             <v-col cols="6" class="py-0">
               <v-autocomplete
-                ref="tag"
                 light
                 deletable-chips
                 chips
@@ -136,7 +135,6 @@
                 @input="tagErrors = []"
                 :items="listTag"
                 v-model="tag"
-                @blur="backToTop"
               >
               </v-autocomplete>
             </v-col>
@@ -171,7 +169,6 @@
                 spellcheck="false"
                 placeholder="Nội dung"
                 id="vue-2-editor-fix-height-3"
-                @blur="backToTop"
               ></vue-editor>
               <div class="pt-0">
                 <div class="fs-12 red--text px-4" v-if="contentDescription">
@@ -200,7 +197,6 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <div v-show="false" ref="to_top" @click="$vuetify.goTo(-10000)"></div>
   </v-dialog>
 </template>
 
@@ -307,9 +303,6 @@ export default {
     }
   },
   methods: {
-    backToTop() {
-      this.$refs.to_top.click()
-    },
     remove(item) {
       const index = this.tag.indexOf(item.id)
       if (index >= 0) this.tag.splice(index, 1)
@@ -416,12 +409,10 @@ export default {
       if (this.$isNullOrEmpty(this.content)) {
         hasErrors = true
         this.contentDescription = true
-        this.$refs.content.focus()
       }
       if ((this.tag || []).length === 0) {
         hasErrors = true
         this.tagErrors = ['Vui lòng chọn hashtag']
-        this.$refs.tag.focus()
       }
       if (!hasErrors) {
         this.$wait.start('logging')

@@ -26,7 +26,7 @@ const options = {
   separator: '|',
   showConsoleColors: true
 }
-Vue.use(Vue2Editor, Quill)
+Vue.use(Vue2Editor)
 Vue.use(VueLogger, options)
 Vue.use(Notifications)
 Vue.use(vueXlsxTable, { rABS: false })

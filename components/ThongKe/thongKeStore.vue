@@ -85,7 +85,7 @@
                 </v-row>
               </template>
             </v-data-table>
-            <pagination
+            <!-- <pagination
               :page="page"
               :pageCount="pageCount"
               :pageSize="pageSize"
@@ -94,7 +94,7 @@
               @changePage="changePage"
               @changePageSize="changePageSize"
             >
-            </pagination>
+            </pagination> -->
           </div>
         </v-col>
       </v-row>
@@ -124,7 +124,7 @@
                   </v-col>
                   <v-spacer></v-spacer>
 
-                  <div class="d-flex">
+                  <!-- <div class="d-flex">
                     <div>
                       <v-select
                         v-model="planStore"
@@ -179,11 +179,11 @@
                         Tìm kiếm
                       </v-btn>
                     </div>
-                  </div>
+                  </div> -->
                 </v-row>
               </template>
             </v-data-table>
-            <pagination
+            <!-- <pagination
               :page="page"
               :pageCount="pageCount"
               :pageSize="pageSize"
@@ -192,7 +192,7 @@
               @changePage="changePage"
               @changePageSize="changePageSize"
             >
-            </pagination>
+            </pagination> -->
           </div>
         </v-col>
       </v-row>
