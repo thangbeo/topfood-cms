@@ -5,7 +5,7 @@
         :headers="headers"
         :items="items"
         hide-default-footer
-        items-per-page="500"
+        :items-per-page="pageSize"
         :loading="$wait.is('loadingUser')"
         loading-text="Xin chờ..."
         sort-by="stt"
@@ -115,7 +115,7 @@ export default {
     ],
     pageCount: 0,
     page: 0,
-    pageSize: 20,
+    pageSize: 500,
     openAdd: false,
     openUpdate: false,
     user_detail: '',
