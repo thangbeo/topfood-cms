@@ -70,7 +70,6 @@
 
         <template v-slot:[`item.files`]="{ item }">
           <div class="my-2">
-            {{ item.files }}
             <div v-viewer v-if="(item.files || []).length !== 0">
               <template v-for="(i, idx) in item.files">
                 <img
