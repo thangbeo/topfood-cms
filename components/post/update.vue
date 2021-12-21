@@ -165,18 +165,16 @@
           </v-row>
           <v-row>
             <v-col cols="12" class="pt-0">
-              <vue-editor
-                :editor-toolbar="customToolbar"
+              <v-textarea
                 v-model="content"
                 spellcheck="false"
+                class="fs-14"
                 placeholder="Nội dung"
-                id="vue-2-editor-fix-height-3"
-              ></vue-editor>
-              <div class="pt-0">
-                <div class="fs-12 red--text px-4" v-if="contentDescription">
-                  Vui lòng nhập nội dung
-                </div>
-              </div>
+                outlined
+                dense
+                :error-messages="contentErrors"
+                @input="contentErrors = []"
+              ></v-textarea>
             </v-col>
           </v-row>
         </v-container>
@@ -298,6 +296,7 @@ export default {
     food: [],
     tagErrors: [],
     contentDescription: false,
+    contentErrors: [],
   }),
   watch: {
     open() {
@@ -421,6 +420,7 @@ export default {
       this.food = null
       this.error_msg_slider = ''
       this.tagErrors = []
+      this.contentErrors = []
     },
 
     checkValidate() {
@@ -433,7 +433,7 @@ export default {
       let hasErrors = false
       if (this.$isNullOrEmpty(this.content)) {
         hasErrors = true
-        this.contentDescription = true
+        this.contentErrors = ['Vui lòng nhập nội dung']
       }
       if ((this.tag || []).length === 0) {
         hasErrors = true
