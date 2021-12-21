@@ -131,11 +131,10 @@
       <v-card-actions>
         <v-spacer />
 
-  
         <v-btn text height="30px" class="secondary" @click="toggle">
           <div class="text-none">Đóng</div>
         </v-btn>
-              <v-btn
+        <v-btn
           text
           height="30px"
           class="primary"
@@ -184,7 +183,7 @@ export default {
     dateOfBirth: null,
     city: null,
     listCity: [],
-    cityErrors: []
+    cityErrors: [],
   }),
   watch: {
     open(value) {
@@ -193,11 +192,11 @@ export default {
       } else {
         this.reset()
       }
-    }
+    },
   },
   methods: {
     getListCity() {
-      this.$store.dispatch('users/getlistCity').then(response => {
+      this.$store.dispatch('users/getlistCity').then((response) => {
         this.listCity = response.data
       })
     },
@@ -342,16 +341,9 @@ export default {
         this.phoneErrors = 'Số điện thoại không hợp lệ'
       }
 
-      if (this.$isNullOrEmpty(this.groups)) {
+      if (this.$isNullOrEmpty(this.city)) {
+        this.cityErrors = ['Không được để trống']
         hasErrors = true
-        this.groupsErrors = ['Không được để trống']
-      } else {
-        if (this.groups === 'ROLE_STORE') {
-          if (this.$isNullOrEmpty(this.city)) {
-            this.cityErrors = ['Không được để trống']
-            hasErrors = true
-          }
-        }
       }
 
       if (!hasErrors) {
@@ -370,16 +362,16 @@ export default {
         birthday: this.$isNullOrEmpty(this.dateOfBirth)
           ? ''
           : moment(this.dateOfBirth).format(),
-        role: this.groups
+        role: 'ROLE_STORE',
       }
       this.$store
         .dispatch('users/addAccount', data)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Thêm tài khoản thành công'
+              text: 'Thêm tài khoản thành công',
             })
             this.$emit('success')
             this.toggle()
@@ -387,17 +379,17 @@ export default {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$log.debug(e)
         })
         .finally(() => {
           this.$wait.end('logging')
         })
-    }
-  }
+    },
+  },
 }
 </script>

@@ -70,18 +70,15 @@
 
         <template v-slot:[`item.files`]="{ item }">
           <div class="my-2">
+            {{ item.files }}
             <div v-viewer v-if="(item.files || []).length !== 0">
               <template v-for="(i, idx) in item.files">
                 <img
                   :key="i + idx"
                   width="160"
                   height="80px"
-                  style="object-fit: contain;"
-                  :src="
-                    i.includes('http://58.84.1.32:8080')
-                      ? `${i}`
-                      : `${BASE.URL}${i}`
-                  "
+                  style="object-fit: contain"
+                  :src="`${i}`"
                 />
               </template>
             </div>
@@ -89,7 +86,7 @@
               v-else
               width="160"
               height="80px"
-              style="object-fit: contain;"
+              style="object-fit: contain"
               src="no-image.png"
             />
           </div>
@@ -99,14 +96,14 @@
         </template>
         <template v-slot:[`item.tags`]="{ item }">
           <template v-for="(i, index) in item.tags">
-            <div :key="i.id" class="pl-10  py-1">
+            <div :key="i.id" class="pl-10 py-1">
               <span>{{ index + 1 }}.</span><span>{{ i.tagName }}</span>
             </div>
           </template>
         </template>
         <template v-slot:[`item.foods`]="{ item }">
           <template v-for="(i, index) in item.foods">
-            <div :key="i.id" class="pl-10  py-1">
+            <div :key="i.id" class="pl-10 py-1">
               <span>{{ index + 1 }}.</span><span>{{ i.name }}</span>
             </div>
           </template>
@@ -203,19 +200,19 @@ export default {
         sortable: false,
         value: 'files',
         width: 100,
-        align: 'center'
+        align: 'center',
       },
       {
         text: 'Danh mục món ăn',
         sortable: false,
         value: 'tags',
-        width: 100
+        width: 100,
       },
       {
         text: 'Danh sách món ăn',
         sortable: false,
         value: 'foods',
-        width: 100
+        width: 100,
       },
       // { text: 'Tiêu đề ', sortable: false, value: 'tagName', width: 100 },
 
@@ -224,18 +221,18 @@ export default {
         value: 'action',
         sortable: false,
         align: 'center',
-        width: 80
-      }
+        width: 80,
+      },
     ],
     listStatus: [
       {
         text: 'Ẩn',
-        value: true
+        value: true,
       },
       {
         text: 'Hiển thị',
-        value: false
-      }
+        value: false,
+      },
     ],
     BASE,
     page: 0,
@@ -253,7 +250,7 @@ export default {
     alertOpenDelete: false,
     dataItem: {},
     alertdelete: null,
-    role: null
+    role: null,
   }),
   created() {
     this.role = Cookies.get('userGroup')
@@ -270,19 +267,19 @@ export default {
     confirmDelete() {
       this.$store
         .dispatch('post/deletePost', { postId: this.dataItem.id })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Xóa thành công'
+              text: 'Xóa thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Hệ thống lỗi'
+              text: 'Hệ thống lỗi',
             })
           }
         })
@@ -344,9 +341,9 @@ export default {
         .dispatch('post/getList', {
           page: this.page,
           pageSize: this.pageSize,
-          accountId: Cookies.get('userId')
+          accountId: Cookies.get('userId'),
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.items = response.response.data.data
             // this.pageCount = response.data.pageTotal
@@ -354,13 +351,13 @@ export default {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-    }
+    },
 
     // reset password
-  }
+  },
 }
 </script>

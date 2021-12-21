@@ -15,28 +15,29 @@
         class="pb-0"
         style="max-height: calc(100vh - 13rem); overflow-x: hidden"
       >
-        <v-container class="pt-8 " fluid>
+        <v-container class="pt-8" fluid>
           <v-row>
             <v-col cols="4"></v-col>
             <v-col
               cols="4"
               class="py-0"
-              style="justify-content: center; display: flex;"
+              style="justify-content: center; display: flex"
             >
               <div
                 v-if="$isNullOrEmpty(avatar)"
                 style="
-                          border: 2px dashed rgb(152, 157, 235);
-                          border-radius: 10px;
-                          height:150px; width: 150px;
-                        "
+                  border: 2px dashed rgb(152, 157, 235);
+                  border-radius: 10px;
+                  height: 150px;
+                  width: 150px;
+                "
                 @click="selectFileOpen"
               >
                 <v-row
                   class="ma-0"
                   justify="center"
                   align="center"
-                  style="height:150px; width: 150px;"
+                  style="height: 150px; width: 150px"
                 >
                   <v-col cols="12" class="d-flex justify-center">
                     <div>
@@ -46,17 +47,15 @@
                     </div>
                   </v-col>
                   <v-col cols="12" class="d-flex justify-center pt-0">
-                    <div class="primary--text text-none">
-                      Tải ảnh lên
-                    </div>
+                    <div class="primary--text text-none">Tải ảnh lên</div>
                   </v-col>
                 </v-row>
               </div>
               <div v-else>
                 <img
                   v-viewer
-                  style=" height:auto; width: 150px;  object-fit: contain;"
-                  :src="`${BASE.URL}${avatar}`"
+                  style="height: auto; width: 150px; object-fit: contain"
+                  :src="`${avatar}`"
                 />
 
                 <v-btn
@@ -77,7 +76,7 @@
                 :value="file"
                 @change="inputFile($event)"
                 accept="image/png, image/jpeg, image/gif"
-                id="input_customer_information_file"
+                id="input_customer_information_file_add"
                 class="d-none"
               ></v-file-input>
             </v-col>
@@ -105,7 +104,6 @@
       <v-card-actions>
         <v-spacer />
 
-        
         <v-btn text height="30px" class="secondary" @click="toggle">
           <div class="text-none">Đóng</div>
         </v-btn>
@@ -144,7 +142,7 @@ export default {
     img: '',
     limited_msg: '',
     required_img: false,
-    logging: false
+    logging: false,
   }),
   watch: {},
   methods: {
@@ -156,25 +154,25 @@ export default {
       const data = { formData }
       this.$store
         .dispatch('app/filesUpload', data)
-        .then(response => {
+        .then((response) => {
           console.log(response.response.status)
           if (response.response.status === 200) {
-            this.avatar = response.response.data.data.path
+            this.avatar = `${BASE.URL}${response.response.data.data.path}`
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$log.debug(e)
         })
     },
     selectFileOpen() {
       return window.document
-        .getElementById('input_customer_information_file')
+        .getElementById('input_customer_information_file_add')
         .click()
     },
     inputFile(file) {
@@ -225,16 +223,16 @@ export default {
       this.$wait.start('logging')
       let data = {
         tagName: this.title,
-        image: this.avatar
+        image: this.avatar,
       }
       this.$store
         .dispatch('tag/addTag', data)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Thêm thành công'
+              text: 'Thêm thành công',
             })
             this.$emit('success')
             this.toggle()
@@ -242,17 +240,17 @@ export default {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$log.debug(e)
         })
         .finally(() => {
           this.$wait.end('logging')
         })
-    }
-  }
+    },
+  },
 }
 </script>

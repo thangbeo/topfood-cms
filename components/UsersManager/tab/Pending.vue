@@ -225,7 +225,7 @@ import Cookies from 'js-cookie'
 export default {
   transition: 'slide-x-transition',
   components: {
-    updateRole
+    updateRole,
   },
   data: () => ({
     headers: [
@@ -234,7 +234,7 @@ export default {
         text: 'Tên đăng nhập',
         sortable: false,
         value: 'username',
-        width: 100
+        width: 100,
       },
       { text: 'Họ tên', sortable: false, value: 'name', width: 120 },
       { text: 'Email', sortable: false, value: 'email', width: 120 },
@@ -244,7 +244,7 @@ export default {
         sortable: false,
         value: 'role',
         align: 'center',
-        width: 80
+        width: 80,
       },
 
       {
@@ -252,15 +252,15 @@ export default {
         sortable: false,
         value: 'status',
         align: 'center',
-        width: 80
+        width: 80,
       },
       {
         text: 'Chức năng',
         value: 'action',
         sortable: false,
         align: 'center',
-        width: 150
-      }
+        width: 150,
+      },
     ],
 
     page: 0,
@@ -286,7 +286,7 @@ export default {
     listPartner: [],
     openFilter: false,
     openUpdateRole: false,
-    role: null
+    role: null,
   }),
   mounted() {
     this.get_list()
@@ -324,9 +324,9 @@ export default {
         pageSize: this.pageSize,
         status: 'WAIT_ACTIVE',
         role: 'ROLE_USER',
-        phoneNumber: (this.phone || '').trim().length !== 0 ? this.phone : ''
+        phoneNumber: (this.phone || '').trim().length !== 0 ? this.phone : '',
       }
-      this.$store.dispatch('users/get_list', DATA).then(response => {
+      this.$store.dispatch('users/get_list', DATA).then((response) => {
         if (response.response.status === 200) {
           this.items = response.response.data.data
           this.pageCount = response.response.data.data.pageTotal
@@ -334,7 +334,7 @@ export default {
           this.$router.app.$notify({
             group: 'main',
             type: 'warning',
-            text: 'Lỗi hệ thống'
+            text: 'Lỗi hệ thống',
           })
         }
       })
@@ -350,19 +350,19 @@ export default {
     blockUser() {
       this.$store
         .dispatch('users/accountEnable', this.user_info.id)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Khóa tài khoản thành công'
+              text: 'Khóa tài khoản thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -375,19 +375,19 @@ export default {
     activeUser() {
       this.$store
         .dispatch('users/accountAdminActive', this.user_info.id)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Kích hoạt tài khoản thành công'
+              text: 'Kích hoạt tài khoản thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -403,19 +403,19 @@ export default {
     resetPass() {
       this.$store
         .dispatch('users/resetPassword', this.user_info.id)
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Reset mật khẩu thành công'
+              text: 'Reset mật khẩu thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -432,21 +432,21 @@ export default {
       this.$store
         .dispatch('users/deleted_user', {
           id: this.user_info.id,
-          user_name: this.user_info.username
+          user_name: this.user_info.username,
         })
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Xóa tài khoản thành công'
+              text: 'Xóa tài khoản thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
           this.get_list()
@@ -454,7 +454,7 @@ export default {
     },
     toggleFilter() {
       this.openFilter = !this.openFilter
-    }
-  }
+    },
+  },
 }
 </script>

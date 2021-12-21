@@ -25,10 +25,10 @@
                     height="140"
                     width="75rem"
                     style="
-                    overflow-y: auto;
-                    background-color: #f5f7fe;
-                    border: none;
-                  "
+                      overflow-y: auto;
+                      background-color: #f5f7fe;
+                      border: none;
+                    "
                     class="d-flex align-center"
                   >
                     <div
@@ -42,7 +42,8 @@
                           border: 2px dashed rgb(152, 157, 235);
                           border-radius: 10px;
                           cursor: pointer;
-                          height: 120px; width: 120px;
+                          height: 120px;
+                          width: 120px;
                         "
                         @click="select_file"
                       >
@@ -50,7 +51,7 @@
                           class="ma-0"
                           justify="center"
                           align="center"
-                          style="height:120px; width: 120px;"
+                          style="height: 120px; width: 120px"
                         >
                           <v-col cols="12" class="d-flex justify-center">
                             <div>
@@ -74,19 +75,19 @@
                     >
                       <v-img
                         :src="`${BASE.URL}${image.path}`"
-                        class="ml-2 "
+                        class="ml-2"
                         height="120"
                         width="120"
-                        style="border-radius: 10px;"
+                        style="border-radius: 10px"
                       />
 
                       <v-icon
                         style="
-                            cursor: pointer;
-                            position: absolute;
-                            top: 10px;
-                            margin-left: 108px;
-                          "
+                          cursor: pointer;
+                          position: absolute;
+                          top: 10px;
+                          margin-left: 108px;
+                        "
                         size="20"
                         color="error"
                         @click="delete_img_slider(idx)"
@@ -109,6 +110,7 @@
                     id="input_file"
                     accept="image/png, image/jpeg"
                     class="d-none"
+                    multiple
                     @change="inputFile"
                   ></v-file-input>
                 </v-col>
@@ -121,7 +123,7 @@
                 light
                 deletable-chips
                 chips
-                label="Danh sách hashtag"
+                label="Danh sách hashtag *"
                 small-chips
                 no-data-text="Không có dữ liệu"
                 clearable
@@ -212,7 +214,7 @@ import Draggable from 'vuedraggable'
 export default {
   components: {
     IconSelectFile,
-    Draggable
+    Draggable,
   },
   props: ['open'],
   data: () => ({
@@ -234,9 +236,9 @@ export default {
             '24px',
             '30px',
             '32px',
-            '36px'
-          ]
-        }
+            '36px',
+          ],
+        },
       ],
       ['bold', 'italic', 'underline', 'strike'],
       // Bold, italic, underline, strikethrough
@@ -258,15 +260,15 @@ export default {
       // font
       [{ align: [] }],
       // alignment
-      ['clean']
+      ['clean'],
       // Clear font style
       // ['image', 'video']
       // Upload pictures, upload videos
     ],
     editorSettings: {
       modules: {
-        Size: true
-      }
+        Size: true,
+      },
     },
     BASE,
     contentDescription: false,
@@ -294,13 +296,13 @@ export default {
     tag: [],
     food: [],
     listTag: [],
-    tagErrors: []
+    tagErrors: [],
   }),
   watch: {
     open() {
       this.get_list()
       this.getListFood()
-    }
+    },
   },
   methods: {
     remove(item) {
@@ -313,16 +315,16 @@ export default {
         .dispatch('tag/listFood', {
           page: 0,
           accountId: Cookies.get('userId'),
-          pageSize: 10000
+          pageSize: 10000,
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.listFood = response.response.data.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -333,16 +335,16 @@ export default {
           page: 0,
           pageSize: 10000,
           enable: false,
-          tagName: ''
+          tagName: '',
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.listTag = response.response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -359,26 +361,28 @@ export default {
     inputFile(files) {
       let hasErrors = false
       if ((files || []).length !== 0) {
-        if (files.size > 3145728) {
-          hasErrors = true
-          this.error_msg_slider = 'File được chọn không được vượt quá 3MB'
+        for (let i = 0; i < files.length; i++) {
+          if (files[i].size > 3145728) {
+            hasErrors = true
+            this.error_msg_slider = 'File được chọn không được vượt quá 3MB'
+          }
         }
       }
       if (!hasErrors) {
         this.error_msg_slider = ''
         const formData = new FormData()
-
-        formData.append('file', files)
-
+        for (let i = 0; i < files.length; i++) {
+          formData.append('file', files[i])
+        }
         const data = { formData }
         this.$store
-          .dispatch('app/filesUpload', data)
-          .then(response => {
+          .dispatch('app/uploadFiles', data)
+          .then((response) => {
             if (response.response.status === 200) {
-              this.slider_id.unshift(response.response.data.data)
+              this.slider_id = response.response.data.data
             }
           })
-          .catch(e => {
+          .catch((e) => {
             this.$log.debug(e)
           })
       }
@@ -419,23 +423,23 @@ export default {
         let files = []
 
         for (let i = 0; i < this.slider_id.length; i++) {
-          files.push(this.slider_id[i].path)
+          files.push(`${BASE.URL}${this.slider_id[i].path}`)
         }
         let data = {
           content: this.content,
           files,
           id: null,
           tagIds: this.tag,
-          foodIds: this.food
+          foodIds: this.food,
         }
         this.$store
           .dispatch('post/addPost', data)
-          .then(response => {
+          .then((response) => {
             if (response.response.status === 200) {
               this.$router.app.$notify({
                 group: 'main',
                 type: 'success',
-                text: 'Thêm thành công'
+                text: 'Thêm thành công',
               })
               this.$emit('success')
 
@@ -444,19 +448,19 @@ export default {
               this.$router.app.$notify({
                 group: 'main',
                 type: 'warning',
-                text: 'Lỗi hệ thống'
+                text: 'Lỗi hệ thống',
               })
             }
           })
-          .catch(e => {
+          .catch((e) => {
             this.$log.debug(e)
           })
           .finally(() => {
             this.$wait.end('logging')
           })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>

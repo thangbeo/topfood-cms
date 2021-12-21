@@ -16,6 +16,10 @@ export const state = () => ({
   filesUpload: {
     url: '/files/upload',
     method: 'POST'
+  },
+  uploadFiles: {
+    url: '/files/uploads',
+    method: 'POST'
   }
 })
 
@@ -84,7 +88,21 @@ export const actions = {
       data: data.formData
     })
     return response
-  }
+  },
+  async uploadFiles(vueContext, data) {
+    const response = await this.$axios({
+      url: `${vueContext.state.uploadFiles.url}`,
+      method: vueContext.state.uploadFiles.method,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${Cookies.get('token')}`
+      },
+      params: {},
+      data: data.formData
+    })
+    return response
+  },
+
 }
 
 export const getters = {}

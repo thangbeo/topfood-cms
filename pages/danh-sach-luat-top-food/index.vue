@@ -110,8 +110,8 @@ export default {
         value: 'action',
         sortable: false,
         align: 'center',
-        width: 80
-      }
+        width: 80,
+      },
     ],
     pageCount: 0,
     page: 0,
@@ -128,7 +128,7 @@ export default {
     role: null,
     title: '',
 
-    dataDetail: {}
+    dataDetail: {},
   }),
   mounted() {
     this.get_list()
@@ -170,16 +170,16 @@ export default {
         .dispatch('rule/getListRule', {
           pageSize: this.pageSize,
           page: this.page,
-          title: this.title
+          title: this.title,
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.items = response.response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -189,7 +189,7 @@ export default {
 
     toggleFilter() {
       this.openFilter = !this.openFilter
-    }
-  }
+    },
+  },
 }
 </script>

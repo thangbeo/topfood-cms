@@ -6,7 +6,7 @@
           <v-row class="mt-1" justify="center">
             <h2 class="black--text">QUÊN MẬT KHẨU</h2>
           </v-row>
-          <v-divider class=" my-6" />
+          <v-divider class="my-6" />
 
           <v-row>
             <v-col cols="12" class="pb-0">
@@ -104,7 +104,7 @@ export default {
   layout: 'login',
   head() {
     return {
-      title: 'Đăng nhập'
+      title: 'Đăng nhập',
     }
   },
   transition(to, from) {
@@ -131,7 +131,7 @@ export default {
     newPasswordErrors: [],
     retypePassworErrors: [],
     retypeNewShowPass: false,
-    retypePassword: null
+    retypePassword: null,
   }),
 
   methods: {
@@ -169,23 +169,23 @@ export default {
         let data = {
           email: this.email,
           newPassword: this.newPassword,
-          otp: this.importOpt
+          otp: this.importOpt,
         }
 
         this.$store
           .dispatch('login/forgotPassword', data)
-          .then(response => {
+          .then((response) => {
             if (response.response.status !== 200) {
               this.$router.app.$notify({
                 group: 'login',
                 type: 'warn',
-                text: response.response.data.message
+                text: response.response.data.message,
               })
             } else {
               this.$router.app.$notify({
                 group: 'login',
                 type: 'success',
-                text: response.response.data.message
+                text: response.response.data.message,
               })
               setTimeout(() => {
                 this.$router.push('/login')
@@ -193,7 +193,7 @@ export default {
               }, 1000)
             }
           })
-          .catch(e => {
+          .catch((e) => {
             this.$log.debug(e)
           })
           .finally(() => {
@@ -255,14 +255,14 @@ export default {
         this.$wait.start('logging')
         this.$store
           .dispatch('login/getOpt', {
-            email: this.email
+            email: this.email,
           })
-          .then(response => {
+          .then((response) => {
             if (response.response.status === 200) {
               this.$router.app.$notify({
                 group: 'login',
                 type: 'success',
-                text: 'Gửi email thành công'
+                text: 'Gửi email thành công',
               })
               setTimeout(() => {
                 this.disabled = false
@@ -271,18 +271,18 @@ export default {
               this.$router.app.$notify({
                 group: 'login',
                 type: 'warn',
-                text: response.response.data.message
+                text: response.response.data.message,
               })
             }
           })
-          .catch(e => {
+          .catch((e) => {
             this.$log.debug(e)
           })
           .finally(() => {
             this.$wait.end('logging')
           })
       }
-    }
-  }
+    },
+  },
 }
 </script>

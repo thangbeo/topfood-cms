@@ -17,7 +17,6 @@
       >
         <template v-slot:top>
           <v-app-bar flat color="white">
-           
             <div class="flex-grow-1"></div>
             <!-- <v-text-field
               v-model="search"
@@ -57,7 +56,7 @@
               :key="i.id"
               width="160"
               height="80px"
-              style="object-fit: contain;"
+              style="object-fit: contain"
               v-viewer
               :src="`${BASE.URL}${i.path}`"
             />
@@ -140,7 +139,7 @@ export default {
   transition: 'slide-x-transition',
   components: {
     add,
-    update
+    update,
   },
   data: () => ({
     BASE,
@@ -155,7 +154,7 @@ export default {
     alertOpenDelete: false,
     alertdelete: null,
     openUpdated: false,
-    dataDetail: {}
+    dataDetail: {},
   }),
   mounted() {
     this.get_list()
@@ -169,7 +168,7 @@ export default {
           sortable: false,
           value: 'files',
           width: 100,
-          align: 'center'
+          align: 'center',
         },
         { text: 'Tên món ăn', sortable: false, value: 'name', width: 100 },
         {
@@ -177,17 +176,17 @@ export default {
           sortable: false,
           value: 'price',
           width: 100,
-          align: 'center'
+          align: 'center',
         },
         {
           text: 'Chức năng',
           value: 'action',
           sortable: false,
           align: 'center',
-          width: 80
-        }
+          width: 80,
+        },
       ]
-    }
+    },
   },
   methods: {
     getItemIndex(item) {
@@ -206,19 +205,19 @@ export default {
     confirmDelete() {
       this.$store
         .dispatch('tag/deleteSubTag', { foodId: this.dataItem.id })
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Xóa thành công'
+              text: 'Xóa thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Hệ thống lỗi'
+              text: 'Hệ thống lỗi',
             })
           }
         })
@@ -253,9 +252,9 @@ export default {
       this.$store
         .dispatch('tag/listFood', {
           page: this.page,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.items = response.response.data.data.data
             this.pageCount = response.response.data.data.pageTotal
@@ -263,13 +262,13 @@ export default {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-    }
+    },
 
     // reset password
-  }
+  },
 }
 </script>

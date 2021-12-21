@@ -25,10 +25,10 @@
                     height="140"
                     width="75rem"
                     style="
-                    overflow-y: auto;
-                    background-color: #f5f7fe;
-                    border: none;
-                  "
+                      overflow-y: auto;
+                      background-color: #f5f7fe;
+                      border: none;
+                    "
                     class="d-flex align-center"
                   >
                     <div
@@ -42,7 +42,8 @@
                           border: 2px dashed rgb(152, 157, 235);
                           border-radius: 10px;
                           cursor: pointer;
-                          height: 120px; width: 120px;
+                          height: 120px;
+                          width: 120px;
                         "
                         @click="select_file"
                       >
@@ -50,7 +51,7 @@
                           class="ma-0"
                           justify="center"
                           align="center"
-                          style="height:120px; width: 120px;"
+                          style="height: 120px; width: 120px"
                         >
                           <v-col cols="12" class="d-flex justify-center">
                             <div>
@@ -73,20 +74,20 @@
                       :key="`${idx}+${image}`"
                     >
                       <v-img
-                        :src="`${BASE.URL}${image.path}`"
+                        :src="`${image.path}`"
                         class="ml-2"
                         height="120"
                         width="120"
-                        style="border-radius: 10px;"
+                        style="border-radius: 10px"
                       >
                       </v-img>
                       <v-icon
                         style="
-                            cursor: pointer;
-                            position: absolute;
-                            top: 10px;
-                            margin-left: 108px;
-                          "
+                          cursor: pointer;
+                          position: absolute;
+                          top: 10px;
+                          margin-left: 108px;
+                        "
                         size="20"
                         color="error"
                         @click="delete_img_slider(idx)"
@@ -124,7 +125,7 @@
                 light
                 deletable-chips
                 chips
-                label="Danh sách hashtag"
+                label="Danh sách hashtag *"
                 small-chips
                 no-data-text="Không có dữ liệu"
                 clearable
@@ -213,7 +214,7 @@ import Draggable from 'vuedraggable'
 export default {
   components: {
     IconSelectFile,
-    Draggable
+    Draggable,
   },
   props: ['open', 'data'],
   data: () => ({
@@ -235,9 +236,9 @@ export default {
             '24px',
             '30px',
             '32px',
-            '36px'
-          ]
-        }
+            '36px',
+          ],
+        },
       ],
       ['bold', 'italic', 'underline', 'strike'],
       // Bold, italic, underline, strikethrough
@@ -259,15 +260,15 @@ export default {
       // font
       [{ align: [] }],
       // alignment
-      ['clean']
+      ['clean'],
       // Clear font style
       // ['image', 'video']
       // Upload pictures, upload videos
     ],
     editorSettings: {
       modules: {
-        Size: true
-      }
+        Size: true,
+      },
     },
     logging: false,
     BASE,
@@ -296,7 +297,7 @@ export default {
     listFood: [],
     food: [],
     tagErrors: [],
-    contentDescription: false
+    contentDescription: false,
   }),
   watch: {
     open() {
@@ -304,7 +305,7 @@ export default {
 
       for (let i = 0; i < this.data.files.length; i++) {
         this.slider_id.push({
-          path: this.data.files[i]
+          path: this.data.files[i],
         })
       }
 
@@ -321,7 +322,7 @@ export default {
 
       this.get_list()
       this.getListFood()
-    }
+    },
   },
   methods: {
     getListFood() {
@@ -329,16 +330,16 @@ export default {
         .dispatch('tag/listFood', {
           page: 0,
           accountId: Cookies.get('userId'),
-          pageSize: 10000
+          pageSize: 10000,
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.listFood = response.response.data.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -353,16 +354,16 @@ export default {
           page: 0,
           pageSize: 10000,
           enable: false,
-          tagName: ''
+          tagName: '',
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.listTag = response.response.data.data
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -378,10 +379,6 @@ export default {
 
     inputFile(files) {
       let hasErrors = false
-      if ((files || []).length === 0) {
-        hasErrors = true
-        this.error_msg_slider = 'Không được để trống'
-      }
       if ((files || []).length !== 0) {
         for (let i = 0; i < files.length; i++) {
           if (files[i].size > 3145728) {
@@ -399,13 +396,13 @@ export default {
         const data = { formData }
         this.$store
           .dispatch('app/filesUpload', data)
-          .then(response => {
+          .then((response) => {
             if (response.response.status === 200) {
               this.path = response.response.data.data.path
-              this.slider_id.unshift({ path: `${this.path}` })
+              this.slider_id.unshift({ path: `${BASE.URL}${this.path}` })
             }
           })
-          .catch(e => {
+          .catch((e) => {
             this.$log.debug(e)
           })
         this.reset_file = []
@@ -447,23 +444,23 @@ export default {
         let files = []
 
         for (let i = 0; i < this.slider_id.length; i++) {
-          files.push(this.slider_id[i].path)
+          files.push(`${this.slider_id[i].path}`)
         }
         let data = {
           content: this.content,
           files,
           id: this.data.id,
           tagIds: this.tag,
-          foodIds: this.food
+          foodIds: this.food,
         }
         this.$store
           .dispatch('post/updatePost', data)
-          .then(response => {
+          .then((response) => {
             if (response.response.status === 200) {
               this.$router.app.$notify({
                 group: 'main',
                 type: 'success',
-                text: 'Cập nhật thành công'
+                text: 'Cập nhật thành công',
               })
               this.$emit('success')
               this.toggle()
@@ -471,19 +468,19 @@ export default {
               this.$router.app.$notify({
                 group: 'main',
                 type: 'warning',
-                text: 'Lỗi hệ thống'
+                text: 'Lỗi hệ thống',
               })
             }
           })
-          .catch(e => {
+          .catch((e) => {
             this.$log.debug(e)
           })
           .finally(() => {
             this.$wait.end('logging')
           })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>

@@ -37,7 +37,7 @@
               :items="listStatus"
               label="Hiển thị/Ẩn"
               style="max-width: 250px"
-              class="mr-2 fs-14 "
+              class="mr-2 fs-14"
               dense
               outlined
               hide-details
@@ -68,7 +68,7 @@
           </div>
         </template>
         <template v-slot:[`item.enable`]="{ item }" class="text-center">
-          <div style="display: flex;    justify-content: center;">
+          <div style="display: flex; justify-content: center">
             <v-select
               v-model="item.enable"
               :items="listStatus"
@@ -78,7 +78,7 @@
               background-color="#F9F9F9"
               hide-details
               style="max-width: 120px"
-              class=" border-1 fs-14"
+              class="border-1 fs-14"
               @change="confirm_change_status(item)"
             >
             </v-select>
@@ -91,20 +91,16 @@
               v-if="!$isNullOrEmpty(item.image)"
               width="160"
               height="80px"
-              style="object-fit: contain;"
+              style="object-fit: contain"
               v-viewer
-              :src="
-                item.image.includes('/files/')
-                  ? `${BASE.URL}${item.image}`
-                  : item.image
-              "
+              :src="item.image"
             />
 
             <img
               v-else
               width="160"
               height="80px"
-              style="object-fit: contain;"
+              style="object-fit: contain"
               src="no-image.png"
             />
           </div>
@@ -190,14 +186,14 @@ export default {
         sortable: false,
         value: 'image',
         width: 100,
-        align: 'center'
+        align: 'center',
       },
       {
         text: 'Hiển thị/Ẩn',
         sortable: false,
         value: 'enable',
         width: 100,
-        align: 'center'
+        align: 'center',
       },
       // { text: 'Tiêu đề ', sortable: false, value: 'tagName', width: 100 },
 
@@ -206,18 +202,18 @@ export default {
         value: 'action',
         sortable: false,
         align: 'center',
-        width: 80
-      }
+        width: 80,
+      },
     ],
     listStatus: [
       {
         text: 'Ẩn',
-        value: true
+        value: true,
       },
       {
         text: 'Hiển thị',
-        value: false
-      }
+        value: false,
+      },
     ],
     BASE,
     page: 0,
@@ -235,7 +231,7 @@ export default {
     alertOpenDelete: false,
     dataItem: {},
     alertdelete: null,
-    role: null
+    role: null,
   }),
   created() {
     this.role = Cookies.get('userGroup')
@@ -252,19 +248,19 @@ export default {
     confirmDelete() {
       this.$store
         .dispatch('tag/deleteTag', { id: this.dataItem.id })
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Xóa thành công'
+              text: 'Xóa thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Hệ thống lỗi'
+              text: 'Hệ thống lỗi',
             })
           }
         })
@@ -280,19 +276,19 @@ export default {
     change_status() {
       this.$store
         .dispatch('tag/tagEnable', { id: this.status_data.id })
-        .then(response => {
+        .then((response) => {
           if (response.status === 200) {
             this.$router.app.$notify({
               group: 'main',
               type: 'success',
-              text: 'Cập nhật trạng thái thành công'
+              text: 'Cập nhật trạng thái thành công',
             })
             this.get_list()
           } else {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
@@ -335,9 +331,9 @@ export default {
           page: this.page,
           pageSize: this.pageSize,
           tagName: this.tagName,
-          enable: this.status
+          enable: this.status,
         })
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.items = response.response.data.data
             // this.pageCount = response.response.data.pageTotal
@@ -345,13 +341,13 @@ export default {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-    }
+    },
 
     // reset password
-  }
+  },
 }
 </script>

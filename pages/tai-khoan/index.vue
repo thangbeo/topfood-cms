@@ -10,7 +10,7 @@
         <v-tab
           :class="
             (tab !== 0 && 'black--text') +
-              ' text-capitalize letter-spacing-normal'
+            ' text-capitalize letter-spacing-normal'
           "
           @click="clicked_tab(0)"
         >
@@ -21,7 +21,7 @@
         <v-tab
           :class="
             (tab !== 1 && 'black--text') +
-              ' text-capitalize letter-spacing-normal'
+            ' text-capitalize letter-spacing-normal'
           "
           @click="clicked_tab(1)"
         >
@@ -32,7 +32,7 @@
         <v-tab
           :class="
             (tab !== 2 && 'black--text') +
-              ' text-capitalize letter-spacing-normal'
+            ' text-capitalize letter-spacing-normal'
           "
           @click="clicked_tab(2)"
         >
@@ -67,12 +67,12 @@ export default {
   components: {
     Pending,
     AccountStore,
-    AccountUser
+    AccountUser,
   },
 
   data: () => ({
     role: null,
-    tab: 0
+    tab: 0,
   }),
 
   created() {
@@ -87,7 +87,7 @@ export default {
       } else if (value === 2) {
         this.$refs.TKStore.get_list()
       }
-    }
-  }
+    },
+  },
 }
 </script>
