@@ -230,7 +230,7 @@ export default {
         { id: 9, name: 'Tháng 9' },
         { id: 10, name: 'Tháng 10' },
         { id: 11, name: 'Tháng 11' },
-        { id: 12, name: 'Tháng 12' }
+        { id: 12, name: 'Tháng 12' },
       ],
       planUser: 'MONTH',
       planStore: 'MONTH',
@@ -241,9 +241,9 @@ export default {
       list_plan: [
         { value: 'MONTH', text: 'Tháng' },
         // { value: 'YEAR', text: 'Năm' },
-        { value: 'YEAR', text: 'Năm' }
+        { value: 'YEAR', text: 'Năm' },
       ],
-      role: null
+      role: null,
     }
   },
 
@@ -255,27 +255,27 @@ export default {
           value: 'stt',
           align: 'center',
           sortable: false,
-          width: '3%'
+          width: '3%',
         },
         {
           text: 'Món ăn',
           value: '',
           sortable: false,
-          width: 200
+          width: 200,
         },
 
         {
-          text: 'Số lượng bán',
+          text: 'Số lượt yêu thích',
           value: '',
           sortable: false,
-          width: 200
+          width: 200,
         },
-        {
-          text: 'Doanh thu (VNĐ)',
-          value: '',
-          sortable: false,
-          width: 200
-        }
+        // {
+        //   text: 'Số lượt ',
+        //   value: '',
+        //   sortable: false,
+        //   width: 200
+        // }
       ]
     },
     headersUser() {
@@ -285,35 +285,35 @@ export default {
           value: 'stt',
           align: 'center',
           sortable: false,
-          width: '3%'
+          width: '3%',
         },
         {
           text: 'Bài viết',
           value: '',
           sortable: false,
-          width: 200
+          width: 200,
         },
 
         {
           text: 'Số lượng Lượt thích',
           value: '',
           sortable: false,
-          width: 200
+          width: 200,
         },
         {
           text: 'Số lượng bình luận',
           value: '',
           sortable: false,
-          width: 200
+          width: 200,
         },
         {
           text: 'Số lượng chia sẽ',
           value: '',
           sortable: false,
-          width: 200
-        }
+          width: 200,
+        },
       ]
-    }
+    },
   },
   created() {
     this.role = Cookies.get('userGroup')
@@ -347,8 +347,8 @@ export default {
       for (let i = year + 10; i > year - 10; i--) {
         this.ItemsYear.push(i)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
