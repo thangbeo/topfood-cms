@@ -17,22 +17,23 @@
             <v-col
               cols="4"
               class="pt-0"
-              style="justify-content: center; text-align: -webkit-center;"
+              style="justify-content: center; text-align: -webkit-center"
             >
               <div
                 v-if="$isNullOrEmpty(avatar)"
                 style="
-                          border: 2px dashed rgb(152, 157, 235);
-                          border-radius: 10px;
-                          height:150px; width: 150px;
-                        "
+                  border: 2px dashed rgb(152, 157, 235);
+                  border-radius: 10px;
+                  height: 150px;
+                  width: 150px;
+                "
                 @click="selectFileOpen"
               >
                 <v-row
                   class="ma-0"
                   justify="center"
                   align="center"
-                  style="height:150px; width: 150px;"
+                  style="height: 150px; width: 150px"
                 >
                   <v-col cols="12" class="d-flex justify-center">
                     <div>
@@ -42,16 +43,14 @@
                     </div>
                   </v-col>
                   <v-col cols="12" class="d-flex justify-center pt-0">
-                    <div class="primary--text text-none">
-                      Tải ảnh lên
-                    </div>
+                    <div class="primary--text text-none">Tải ảnh lên</div>
                   </v-col>
                 </v-row>
               </div>
               <div v-else>
                 <img
                   v-viewer
-                  style=" height:auto; width: 150px;  object-fit: contain;"
+                  style="height: auto; width: 150px; object-fit: contain"
                   :src="`${BASE.URL}${avatar}`"
                 />
 
@@ -80,7 +79,14 @@
               <v-col
                 cols="12"
                 v-if="required"
-                class="d-block text-center v-messages theme--light error--text mt-1"
+                class="
+                  d-block
+                  text-center
+                  v-messages
+                  theme--light
+                  error--text
+                  mt-1
+                "
                 role="alert"
               >
                 <div class="v-messages__wrapper">
@@ -133,11 +139,10 @@
       <v-card-actions>
         <v-spacer />
 
-      
         <v-btn text height="30px" class="secondary" @click="toggle">
           <div class="text-none">Đóng</div>
         </v-btn>
-          <v-btn text height="30px" class="primary" @click="checkValidate">
+        <v-btn text height="30px" class="primary" @click="checkValidate">
           <div class="text-none">Lưu</div>
         </v-btn>
       </v-card-actions>
@@ -179,9 +184,9 @@ export default {
             '24px',
             '30px',
             '32px',
-            '36px'
-          ]
-        }
+            '36px',
+          ],
+        },
       ],
       ['bold', 'italic', 'underline', 'strike'],
       // Bold, italic, underline, strikethrough
@@ -203,16 +208,16 @@ export default {
       // font
       [{ align: [] }],
       // alignment
-      ['clean']
+      ['clean'],
       // Clear font style
       // ['image', 'video']
       // Upload pictures, upload videos
     ],
     editorSettings: {
       modules: {
-        Size: true
-      }
-    }
+        Size: true,
+      },
+    },
   }),
   watch: {
     open(value) {
@@ -226,7 +231,7 @@ export default {
         this.required = false
         this.detail()
       }
-    }
+    },
   },
   methods: {
     toggle() {
@@ -238,22 +243,24 @@ export default {
       this.titleErrors = []
     },
     detail() {
-      this.$store.dispatch('tag/detailSubTag', this.data.id).then(response => {
-        if (response.response.status === 200) {
-          this.avatar = response.response.data.data.files[0]
+      this.$store
+        .dispatch('tag/detailSubTag', this.data.id)
+        .then((response) => {
+          if (response.response.status === 200) {
+            this.avatar = response.response.data.data.files[0]
 
-          this.checkValuePrice(response.response.data.data.price)
-          this.title = response.response.data.data.name
-          this.content = response.response.data.data.content
-          this.tagId = response.response.data.data.tag.id
-        } else {
-          this.$router.app.$notify({
-            group: 'main',
-            type: 'warning',
-            text: 'Lỗi hệ thống'
-          })
-        }
-      })
+            this.checkValuePrice(response.response.data.data.price)
+            this.title = response.response.data.data.name
+            this.content = response.response.data.data.content
+            this.tagId = response.response.data.data.tag.id
+          } else {
+            this.$router.app.$notify({
+              group: 'main',
+              type: 'warning',
+              text: 'Lỗi hệ thống',
+            })
+          }
+        })
     },
     checkValidate() {
       let hasErrors = false
@@ -281,14 +288,14 @@ export default {
         id: this.data.id,
         name: this.title,
         price: this.price.replace(/,/g, ''),
-        tagId: this.tagId
+        tagId: this.tagId,
       }
-      this.$store.dispatch('tag/updateSubTab', data).then(response => {
+      this.$store.dispatch('tag/updateSubTab', data).then((response) => {
         if (response.response.status === 200) {
           this.$router.app.$notify({
             group: 'main',
             type: 'success',
-            text: 'Cập nhật thành công'
+            text: 'Cập nhật thành công',
           })
           this.$emit('success')
           this.toggle()
@@ -296,7 +303,7 @@ export default {
           this.$router.app.$notify({
             group: 'main',
             type: 'warning',
-            text: 'Hệ thống lỗi'
+            text: 'Hệ thống lỗi',
           })
         }
       })
@@ -358,7 +365,7 @@ export default {
       const data = { formData }
       this.$store
         .dispatch('app/filesUpload', data)
-        .then(response => {
+        .then((response) => {
           if (response.response.status === 200) {
             this.avatar = response.response.data.data.path
             this.type = response.response.data.data.type
@@ -366,11 +373,11 @@ export default {
             this.$router.app.$notify({
               group: 'main',
               type: 'warning',
-              text: 'Lỗi hệ thống'
+              text: 'Lỗi hệ thống',
             })
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$log.debug(e)
         })
     },
@@ -388,7 +395,7 @@ export default {
           this.file_selected(file)
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
